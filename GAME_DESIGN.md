@@ -225,42 +225,53 @@ When you return to the rebuilt Lab after the mob raid, the **Tech Tree zooms out
 
 ---
 
-## 6. Starting Title Screen, Interactive Tutorial & Minimal Text
+## 6. Starting Title Screen, Story Intro & Interactive Tutorial
 
 ### Starting Screen (`hud.start_screen`)
-- **`[🎓 PLAY + TUTORIAL]`** — Starts with a step-by-step visual hand pointer (`👆`) and 2-word prompts.
-- **`[▶ PLAY (NO TUTORIAL)]`** — Jumps straight into the Lab with all HUD unlocked.
-- **`[⚙️ OPTIONS]`** — Sound/SFX toggle, Haptics toggle, Auto-Tuck speed, Export/Import Save, Hard Reset.
+- **`[🎓 PLAY + TUTORIAL]`** — Starts with a 3-panel **Dr. Franken Pixel Story Intro**, followed by step-by-step guided gameplay prompts.
+- **`[▶ PLAY (NO TUTORIAL)]`** — Jumps straight into the Lab.
+- **`[⚙️ OPTIONS]`** — Sound/SFX toggle, Haptics toggle, Export/Import Save, Hard Reset.
 - **`[📜 CREDITS]`** — Clean retro pixel credits box.
 
-### Step-by-Step Visual Tutorial (Zero Confusion, Max 3 Words per Prompt)
-1. **Step 1 (Lab)**: Bouncing `👆` points at the **Monster Machine** $\rightarrow$ `"1. Print Card 🃏"`
-2. **Step 2 (Lab)**: Bouncing `👆` points at **`[🌙 RAID ▶]`** $\rightarrow$ `"2. Go to Village 🌙"`
-3. **Step 3 (Village)**: Bouncing `👆` points at the **Bottom Card** $\rightarrow$ `"3. Tap Card 👆"`
-4. **Step 4 (Scratch)**: Animated `👆` swipes across the **4 Silver Foil Zones** $\rightarrow$ `"4. Scratch 4 Spots! 🪙"`
-5. **Step 5 (Watch!)**: Card tucks down; stitched monster pops under a house window and turns **Lights ON (`💡`)** $\rightarrow$ `"Lights ON = Scared! 🎉"`
+### Story Intro & Guided Tutorial (`hud.tutorial_overlay`)
+1. **Story Panel 1 (The Exile)**: Dr. Franken was laughed out of the village and built his laboratory on the hill.
+2. **Story Panel 2 (The Scratch-Card Machine)**: His invention prints silver-foil **Monster Scratch Cards** — every card hides 4 randomized monster body parts (`Head`, `Torso`, `Hands`, `Legs`) that stitch together when scratched!
+3. **Story Panel 3 (The Night Raid & Boss House)**: At midnight, all 15 village houses are dark and sleeping (`💤`). The central **Captain's Boss House** is terrified of **Kraken (`🐙`)** parts! Turn their **Lights ON (`💡`)** before dawn!
+4. **Interactive Hand-Pointer Steps**:
+   - **Step 1 (Lab)**: `👆` points at **`[+1 🃏 PRINT CARD]`** on the central Monster Press.
+   - **Step 2 (Lab)**: `👆` points at **`[🌙 RAID ▶]`**.
+   - **Step 3 (Village)**: `👆` points at your **fanned hand of cards** at the bottom.
+   - **Step 4 (Scratch)**: Scratch the **4 tilted foil spots** to reveal a randomized hybrid monster (`🧟/🐙/🎃`) and watch it pop up under the village windows!
 
 ---
 
-## 7. Customizable Lab Machines & Unlockable Monster Collection
+## 7. Focused Pre-Prestige Lab & Prestige-Bought Machines
 
-### Customizable Lab Machine Slots (`hud.lab_machines`)
-The Lab features **3 Customizable Machine Slots** where players can install, upgrade, and tune different card-printing machines:
-1. **Machine #1 — Monster Part Printer (Starter)**:
-   - Prints **4-Zone Monster Scratch Cards** (`Head`, `Torso`, `Hands`, `Legs`).
-   - Player can select which unlocked Monster Set to bias (`🧟 Franken`, `🐙 Kraken`, `🎃 Pumpkin`, `🧛 Vampyr`).
-2. **Machine #2 — Atmosphere Card Printer (Unlockable)**:
-   - Prints **Atmosphere / Weather Scratch Cards** (`🌧️ Thunder Storm`, `🌫️ Spooky Fog`, `🌕 Blood Moon`).
-   - Scratching an Atmosphere Card during the Night Raid changes the village weather and grants a global raid bonus (`+50% Scare Power`, `+12s Night Timer`, or `2x Scream Essence`).
-3. **Machine #3 — Spooky Prop Printer (Unlockable)**:
-   - Prints **Haunted Yard Props** (`🎃 Scarecrow`, `🕯️ Poltergeist Lantern`) that deploy next to houses and passively drain their courage all night.
+### Focused Lab Layout (`hud.lab_screen`)
+- **Before First Prestige (`prestigeCount === 0`)**:
+  - **Only ONE machine (`Monster Card Press`) is in the Lab**, sitting prominently on the central pixel-art laboratory workbench!
+  - Keeps the early game 100% focused, spacious, and easy to understand.
+- **After First Prestige (`prestigeCount >= 1` — Bought with `🔥` Prestige Points)**:
+  - Once the **Angry Villager Mob (`🧑‍🌾🔥🔱`)** raids the Lab and you earn **`🔥` Prestige Points**, two new machine pedestals unlock in the Lab / Prestige Tree:
+    1. **Atmosphere Card Machine (Cost: `2 🔥` Prestige Points)** — Prints **Weather / Atmosphere Scratch Cards** (`🌧️ Storm +50%💥`, `🌫️ Fog +15s🌙`, `🌕 Blood Moon 2x👻`).
+    2. **Spooky Prop Machine (Cost: `3 🔥` Prestige Points)** — Prints **Haunted Yard Props (`🎃`)** that deploy into the village and passively scare nearby houses.
 
-### Unlockable Monster Sets & Full-Pack Collection Bonus (`hud.monster_album`)
-- Players unlock new **Monster Sets** (`🧟 Franken Golem`, `🐙 Deep Kraken`, `🎃 Pumpkin Fiend`, `🧛 Night Vampyr`).
-- Scratching off parts discovers `Head`, `Torso`, `Hands`, and `Legs` in the **Monster Pack Album (`0/4` $\rightarrow$ `4/4`)**.
-- **Complete Pack Bonus (`4/4 Collected`)**:
-  - Completing all 4 parts of a Monster Set permanently unlocks its **Full Pack Mastery Bonus** (`+50% Scare Power` for that set + global `👻` boost)!
-  - Scratching a card where all 4 parts match a completed set spawns an **Awakened Super-Scary Monster** (larger scale, glowing pixel aura, `2.5x` Scare Damage)!
+---
+
+## 8. Dense 15-House Village, Hand-Held Card Fan & True Part Randomization
+
+### Dense 15-House Village Cluster
+- **14 Outer Sleeping Cottages + 1 Central Nautical Boss House (15 Houses Total)** arranged in an organic neighborhood cluster on the dark-green pixel clearing.
+
+### Natural Hand-Held Card Fan & Imperfect Scratch Zones
+- **Hand-Held Arched Fan**: Cards in the bottom dock overlap in a curved, tilted fan (`rotate(-16deg)` to `+16deg` with `translateY` arc + random per-card organic jitter `±2deg` / `±3px`) so they look like real cards held in your hand—never stiffly aligned!
+- **Imperfect Foil Patches**: The 4 scratchable zones on each card also have slight organic tilt (`±2.5deg`) and offset variations.
+
+### True Part Randomization & Unlockable Monster Packs (`hud.monster_album`)
+- **Randomized Hybrid Stitching**: Every card rolls its 4 zones (`Head`, `Torso`, `Hands`, `Legs`) across all active monster sets (`🧟 Franken`, `🐙 Kraken`, `🎃 Pumpkin`, plus unlockable `🧛 Vampire` and `💀 Skeleton`), creating wild stitched hybrids on every card!
+- **Complete Pack Bonus (`4/4 Parts Collected`)**:
+  - Collecting all 4 parts of a Monster Set completes its pack in the **Monster Pack Album (`⭐ FULL PACK`)**, permanently making that monster's parts **`+50% Scarier`**!
+  - Rolling a pure 4-of-a-kind monster spawns a **Giant Glowing Super-Scary Monster (`2.5x Scare Power`)**!
 
 ### Screen Architecture (`9:16` Portrait Primary)
 - **Full-Screen Stage (`100%` Height)**:

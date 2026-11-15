@@ -14,17 +14,17 @@
       <div class="start-bg-trees"></div>
       <div class="start-content" data-design-id="start_card">
         <div class="title-logo-box">
-          <div class="pixel-badge">16-BIT BOOSTER SCRATCHER</div>
+          <div class="pixel-badge">16-BIT MONSTER SCRATCHER</div>
           <h1 class="pixel-title">FRANKEN<br/><span>SCRATCHER</span></h1>
           <div class="title-showcase-row">
-            <img src="assets/parts/franken_head.png" class="showcase-sprite" alt="Franken" />
+            <img src="assets/sprites/dr_franken.png" class="showcase-sprite" alt="Dr Franken" />
             <img src="assets/sprites/cottage_on.png" class="showcase-sprite house-prev" alt="House" />
             <img src="assets/parts/kraken_head.png" class="showcase-sprite" alt="Kraken" />
           </div>
         </div>
 
         <div class="start-menu-btns">
-          <button id="btn-play-tutorial" class="pixel-btn green-px">🎓 PLAY + TUTORIAL</button>
+          <button id="btn-play-tutorial" class="pixel-btn green-px">🎓 PLAY (STORY + TUTORIAL)</button>
           <button id="btn-play-notut" class="pixel-btn gold-px">▶ PLAY (NO TUTORIAL)</button>
           <div class="start-sub-row">
             <button id="btn-open-options" class="pixel-btn blue-px">⚙️ OPTIONS</button>
@@ -42,7 +42,7 @@
       <div class="stat-pill" title="Scream Essence">
         <span>👻</span> <b id="val-essence">0</b>
       </div>
-      <div class="stat-pill torch-pill" title="Mob Torches">
+      <div class="stat-pill torch-pill" title="Prestige Points (Mob Torches)">
         <span>🔥</span> <b id="val-torches">0</b>
       </div>
       <div class="stat-pill timer-pill hidden" id="night-timer-pill">
@@ -57,80 +57,85 @@
       </div>
     </header>
 
-    <!-- GUIDED TUTORIAL FLOATING BANNER (hud.tutorial_overlay) -->
+    <!-- GUIDED TUTORIAL FLOATING BANNER WITH DR. FRANKEN (hud.tutorial_overlay) -->
     <div id="tutorial-banner" class="hidden" data-module="hud.tutorial_overlay">
+      <img src="assets/sprites/dr_franken.png" class="tut-doc-icon" alt="Doc" />
       <span id="tutorial-hand">👆</span>
-      <span id="tutorial-text">1. Tap Print Card!</span>
+      <span id="tutorial-text">1. Tap +1 🃏!</span>
       <button id="btn-skip-tut" class="tiny-skip-btn">✕</button>
     </div>
 
-    <!-- 2. CUSTOMIZABLE PIXEL LAB SCREEN (hud.lab_screen) -->
+    <!-- STORY INTRO COMIC MODAL (Part of Tutorial!) -->
+    <div id="story-modal" class="modal-overlay hidden" data-module="hud.tutorial_overlay">
+      <div class="modal-card story-card">
+        <div class="story-header">
+          <span id="story-step-badge">📖 STORY 1/3</span>
+          <button id="btn-skip-story" class="tiny-skip-btn">SKIP ▶▶</button>
+        </div>
+        <div id="story-visual-box" class="story-visual-box"></div>
+        <p id="story-caption" class="story-caption"></p>
+        <button id="btn-next-story" class="pixel-btn green-px">NEXT ▶</button>
+      </div>
+    </div>
+
+    <!-- 2. PIXEL LAB SCENE (hud.lab_screen) -->
     <main id="lab-screen" class="stage-screen" data-module="hud.lab_screen">
       <div class="stage-bg lab-pixel-bg"></div>
 
       <!-- Visual Quest Stamps + Boss Clue Row -->
       <section id="lab-top-strip" data-module="hud.quest_stamps" data-design-id="quest_stamps">
-        <div class="quest-chip" id="quest-1">
-          <span>🏠💡</span><b id="q1-prog">0/6</b><span class="reward">🔥1</span>
+        <div class="quest-chip" id="quest-1" title="Scare 8 Houses -> +1🔥 Prestige Point">
+          <span>🏠💡</span><b id="q1-prog">0/8</b><span class="reward">🔥1</span>
         </div>
-        <div class="quest-chip" id="quest-2">
+        <div class="quest-chip" id="quest-2" title="Spawn 2 Kraken-Head Monsters -> +1🔥">
           <span>🐙⚡</span><b id="q2-prog">0/2</b><span class="reward">🔥1</span>
         </div>
-        <div class="quest-chip" id="quest-3">
+        <div class="quest-chip" id="quest-3" title="Scare Boss House -> +3🔥">
           <span>⚓👑💡</span><b id="q3-prog">0/1</b><span class="reward">🔥3</span>
-        </div>
-        <div id="boss-clue-mini" data-design-id="boss_clue_card" title="Boss House is scared of Kraken!">
-          <img src="assets/sprites/boss_off.png" class="mini-boss-img" alt="Boss" />
-          <span>😱👉🐙x3</span>
         </div>
       </section>
 
-      <!-- 3 CUSTOMIZABLE LAB MACHINE SLOTS -->
-      <section id="lab-machines-grid" data-design-id="lab_machines_grid">
-        <!-- Slot 1: Monster Part Card Machine -->
-        <div class="machine-slot unlocked" id="slot-machine-1" data-design-id="machine_slot_1">
-          <div class="machine-header">
-            <span>1. MONSTER PRESS</span>
+      <!-- Boss Story Clue Sign in Lab -->
+      <div id="boss-clue-banner" data-design-id="boss_clue_card">
+        <img src="assets/sprites/boss_off.png" class="clue-boss-img" alt="Boss House" />
+        <div class="clue-text-col">
+          <div class="clue-title">SAILOR BOSS HOUSE</div>
+          <div class="clue-weakness">😱 Afraid of <b>🐙 KRAKEN (x3💥)</b></div>
+        </div>
+      </div>
+
+      <!-- LAB FLOOR PEDESTALS: Only 1 Machine Before First Prestige! -->
+      <section id="lab-pedestals-stage" data-design-id="lab_machines_grid">
+        <!-- Main Center Pedestal: Monster Card Printing Machine (Always Available) -->
+        <div class="pedestal-main" id="slot-machine-1" data-design-id="machine_slot_1">
+          <div class="machine-floating-hud">
+            <div class="printed-stack-pill">🃏 <b id="val-monster-cards">3</b> Cards</div>
             <button id="btn-phobia-dial" class="mini-dial-btn" data-module="buttons.phobia_dial">
-              🧬 <b id="dial-icon">🧟 Franken</b>
+              🎲 <b id="dial-icon">Mix All</b>
             </button>
           </div>
-          <div class="machine-body">
-            <img src="assets/sprites/machine_monster.png" class="machine-sprite" alt="Monster Press" />
-            <div class="machine-actions">
-              <div class="printed-badge">🃏 <b id="val-monster-cards">3</b></div>
-              <button id="btn-buy-card" class="pixel-btn gold-px" data-module="buttons.buy_card">
-                +1 🃏 (🪙<span id="val-card-cost">10</span>)
-              </button>
-            </div>
-          </div>
+
+          <img src="assets/sprites/machine_monster.png" class="center-machine-sprite" alt="Monster Press" />
+
+          <button id="btn-buy-card" class="pixel-btn gold-px main-print-btn" data-module="buttons.buy_card">
+            🃏 PRINT CARD (🪙<span id="val-card-cost">10</span>)
+          </button>
         </div>
 
-        <!-- Slot 2: Atmosphere / Weather Card Machine (Unlockable) -->
-        <div class="machine-slot" id="slot-machine-2" data-design-id="machine_slot_2">
-          <div class="machine-header">
-            <span>2. ATMOSPHERE PRESS</span>
-            <span class="atmo-bonus-tag" id="atmo-type-tag">🌧️ +50%💥</span>
+        <!-- Post-Prestige Extra Machine Pedestals (Hidden before 1st Prestige, bought with 🔥 Prestige Points!) -->
+        <div id="post-prestige-machines" class="side-machines-row hidden">
+          <!-- Machine 2: Atmosphere Press (Bought with 🔥 Prestige Points) -->
+          <div class="side-pedestal-card" id="slot-machine-2" data-design-id="machine_slot_2">
+            <div class="side-mac-title">🌩️ ATMOSPHERE</div>
+            <img src="assets/sprites/machine_atmosphere.png" class="side-machine-sprite" alt="Atmosphere" />
+            <div id="machine-2-actions" class="side-mac-actions"></div>
           </div>
-          <div class="machine-body">
-            <img src="assets/sprites/machine_atmosphere.png" class="machine-sprite" alt="Atmosphere Press" />
-            <div class="machine-actions" id="machine-2-actions">
-              <!-- Populated dynamically: Unlock button or Print Atmosphere Card button -->
-            </div>
-          </div>
-        </div>
 
-        <!-- Slot 3: Spooky Yard Prop Machine (Unlockable) -->
-        <div class="machine-slot" id="slot-machine-3" data-design-id="machine_slot_3">
-          <div class="machine-header">
-            <span>3. SPOOKY PROP PRESS</span>
-            <span class="atmo-bonus-tag">🎃 Auto-Scare</span>
-          </div>
-          <div class="machine-body">
-            <img src="assets/sprites/machine_prop.png" class="machine-sprite" alt="Prop Press" />
-            <div class="machine-actions" id="machine-3-actions">
-              <!-- Populated dynamically: Unlock button or Print Prop Card button -->
-            </div>
+          <!-- Machine 3: Spooky Prop Press (Bought with 🔥 Prestige Points) -->
+          <div id="slot-machine-3" class="side-pedestal-card" data-design-id="machine_slot_3">
+            <div class="side-mac-title">🎃 YARD PROP</div>
+            <img src="assets/sprites/machine_prop.png" class="side-machine-sprite" alt="Prop" />
+            <div id="machine-3-actions" class="side-mac-actions"></div>
           </div>
         </div>
       </section>
@@ -139,17 +144,17 @@
       <footer id="lab-controls" data-design-id="lab_controls">
         <button id="btn-open-album" class="game-btn blue-btn" data-module="buttons.open_monster_album" data-design-id="btn_open_album">
           <span class="big-icon">📖🧟</span>
-          <span class="cost-tag" id="album-prog-tag">0/3 ⭐</span>
+          <span class="cost-tag" id="album-prog-tag">0/5 ⭐</span>
         </button>
 
         <button id="btn-open-tech" class="game-btn purple-btn" data-module="buttons.open_tech_tree" data-design-id="btn_open_tech">
           <span class="big-icon">⚡🌳</span>
-          <span class="cost-tag">UPGRADES</span>
+          <span class="cost-tag">TECH TREE</span>
         </button>
 
         <button id="btn-mob-prestige" class="game-btn fire-btn hidden" data-module="buttons.trigger_mob_prestige" data-design-id="btn_mob_prestige">
           <span class="big-icon">🧑‍🌾🔥</span>
-          <span class="cost-tag">RAID!</span>
+          <span class="cost-tag">PRESTIGE</span>
         </button>
 
         <button id="btn-start-night" class="game-btn green-btn" data-module="buttons.start_night" data-design-id="btn_start_night">
@@ -159,13 +164,13 @@
       </footer>
     </main>
 
-    <!-- 3. FULL-SCREEN PIXEL NIGHT VILLAGE STAGE (hud.village_map) -->
+    <!-- 3. FULL-SCREEN PIXEL NIGHT VILLAGE STAGE (15 Houses + Hand-Held Card Fan) -->
     <main id="village-screen" class="stage-screen" data-module="hud.village_map">
       <div class="stage-bg village-pixel-bg"></div>
 
       <!-- Active Atmosphere Weather Banner -->
       <div id="active-atmosphere-banner" class="hidden">
-        <span id="active-atmo-text">🌧️ STORM (+50% SCARE!)</span>
+        <span id="active-atmo-text">🌧️ STORM (+50%💥)</span>
       </div>
 
       <!-- Back to Lab Button -->
@@ -173,7 +178,12 @@
         🧪 LAB
       </button>
 
-      <!-- Standalone Pixel House Sprites Layer -->
+      <!-- Village Houses Counter Pill -->
+      <div id="village-scare-counter">
+        🏠💡 <b id="val-houses-scared">0/15</b>
+      </div>
+
+      <!-- 15 Standalone Pixel House Sprites Layer -->
       <div id="village-houses-layer" data-design-id="village_houses_layer"></div>
 
       <!-- Active Stitched Pixel Monsters & Props Layer -->
@@ -185,21 +195,23 @@
       <!-- End of Night Dawn Summary Toast -->
       <div id="dawn-summary-toast" class="hidden">
         <div class="dawn-title">🌅 NIGHT COMPLETE!</div>
-        <div id="dawn-stats">🏠💡 0 | +0 👻</div>
+        <div id="dawn-stats">🏠💡 0/15 | +0 👻</div>
       </div>
 
-      <!-- 4-STATE AUTO-TUCKING BOTTOM CARD HAND DOCK (hud.card_scratch_dock) -->
+      <!-- 4-STATE NATURAL HAND-HELD CARD DOCK (hud.card_scratch_dock) -->
       <section id="card-hand-dock" class="hand-state-tucked" data-module="hud.card_scratch_dock" data-design-id="card_hand_dock">
         <div id="card-hand-handle">
-          <span id="hand-prompt-icon">👆 CARDS</span>
+          <span id="hand-prompt-icon">👆 HAND</span>
           <b id="hand-cards-left">3</b>
         </div>
 
+        <!-- Arched Hand-Held Card Fan -->
         <div id="card-fan-container"></div>
 
+        <!-- Enlarged Focused Scratch Card with Imperfect/Tilted Scratch Zones -->
         <div id="focused-card-modal" class="hidden" data-module="characters.card_4zones" data-design-id="focused_scratch_card">
           <div class="focused-card-header">
-            <span id="focused-card-title">🪙 SCRATCH 4 SPOTS!</span>
+            <span id="focused-card-title">🪙 SCRATCH THE 4 SPOTS!</span>
             <button id="btn-tuck-card" class="mini-close-btn">▼ HIDE</button>
           </div>
           <div id="scratch-zones-grid" class="zones-4"></div>
@@ -207,7 +219,7 @@
       </section>
     </main>
 
-    <!-- 4. MONSTER PACK COLLECTION ALBUM MODAL (hud.monster_album) -->
+    <!-- 4. MONSTER PACK COLLECTION ALBUM MODAL (5 Monster Sets!) -->
     <div id="monster-album-modal" class="modal-overlay hidden" data-module="hud.monster_album">
       <div class="modal-card">
         <div class="modal-header">
@@ -215,7 +227,7 @@
           <div class="modal-currencies"><span>👻 <b id="album-essence">0</b></span></div>
           <button id="btn-close-album" class="close-btn">✕</button>
         </div>
-        <div class="album-subtitle">Collect all 4 parts of a Monster for <b>+50% Scarier Bonus</b>!</div>
+        <div class="album-subtitle">Complete all 4 parts of a Monster for <b>⭐ +50% Scarier Bonus</b>!</div>
         <div id="monster-album-list" class="scroll-list"></div>
       </div>
     </div>
@@ -224,7 +236,7 @@
     <div id="tech-tree-modal" class="modal-overlay hidden" data-module="hud.tech_tree_modal">
       <div class="modal-card tech-modal-card" data-design-id="tech_modal_card">
         <div class="modal-header">
-          <span>⚡ LAB TECH TREE</span>
+          <span>⚡ LAB &amp; 🔥 PRESTIGE TREE</span>
           <div class="modal-currencies">
             <span>👻 <b id="tech-essence">0</b></span>
             <span>🔥 <b id="tech-torches">0</b></span>
@@ -235,7 +247,7 @@
       </div>
     </div>
 
-    <!-- 6. OPTIONS & CREDITS MODALS (hud.options_credits_modals) -->
+    <!-- 6. OPTIONS & CREDITS MODALS -->
     <div id="options-modal" class="modal-overlay hidden" data-module="hud.options_credits_modals">
       <div class="modal-card">
         <div class="modal-header">
@@ -252,9 +264,10 @@
             <input type="checkbox" id="opt-haptics" checked />
           </label>
           <div class="opt-btns-row">
-            <button id="btn-export-save" class="pixel-btn blue-px">📤 Export Save</button>
-            <button id="btn-import-save" class="pixel-btn purple-px">📥 Import Save</button>
-            <button id="btn-hard-reset" class="pixel-btn red-px">🗑️ Reset Save</button>
+            <button id="btn-replay-story" class="pixel-btn green-px">📖 Replay Story</button>
+            <button id="btn-export-save" class="pixel-btn blue-px">📤 Export</button>
+            <button id="btn-import-save" class="pixel-btn purple-px">📥 Import</button>
+            <button id="btn-hard-reset" class="pixel-btn red-px">🗑️ Reset</button>
           </div>
           <textarea id="save-io-box" rows="2" placeholder="Save code appears here..."></textarea>
         </div>
@@ -270,22 +283,21 @@
         <div class="credits-body">
           <p><b>FRANKEN SCRATCHER</b></p>
           <p>Inspired by <i>Booster Pack Heroes</i>, <i>Scratch Inc.</i> &amp; <i>Haunt the House</i></p>
-          <p>16-Bit Pixel Art, Modular Monster Stitching &amp; Night Village Raids</p>
-          <p>Created in Antigravity</p>
+          <p>16-Bit Pixel Art, Randomized Monster Stitching &amp; Village Scaring</p>
         </div>
       </div>
     </div>
 
-    <!-- 7. ANGRY VILLAGER MOB RAID CUTSCENE OVERLAY (characters.angry_villager_mob) -->
+    <!-- 7. ANGRY VILLAGER MOB RAID CUTSCENE OVERLAY -->
     <div id="mob-raid-overlay" class="modal-overlay hidden" data-module="characters.angry_villager_mob">
       <div class="mob-cutscene-box">
-        <div class="mob-crowd">🧑‍🌾🔥🔱 😡🔥🔱 🧑‍🌾🔥</div>
-        <div class="mob-smash">💥⚙️🔥🧪💥</div>
-        <div class="mob-unlock-badge">🔥 PRESTIGE UNLOCKED! 🔥</div>
+        <img src="assets/sprites/angry_villager.png" class="mob-villager-sprite" alt="Angry Mob" />
+        <div class="mob-crowd">🔥🔱 VILLAGERS BURN THE LAB! 🔱🔥</div>
+        <div class="mob-unlock-badge">🔥 NEW LAB MACHINES &amp; PRESTIGE TREE UNLOCKED!</div>
       </div>
     </div>
 
-    <!-- 8. ELEMENTS CHECKLIST TREE MODAL (hud.module_tree_modal) -->
+    <!-- 8. ELEMENTS CHECKLIST TREE MODAL -->
     <div id="checklist-modal" class="modal-overlay hidden" data-module="hud.module_tree_modal">
       <div class="modal-card">
         <div class="modal-header">
@@ -300,7 +312,7 @@
       </div>
     </div>
 
-    <!-- 9. DESIGNER MODE PANEL WITH PERSISTENT HX (hud.designer_panel) -->
+    <!-- 9. DESIGNER MODE PANEL WITH PERSISTENT HX -->
     <aside id="designer-panel" class="floating-panel hidden" data-module="hud.designer_panel">
       <div class="panel-header">
         <span>🛠️ Designer (`hx`)</span>
@@ -340,16 +352,16 @@
     <!-- 10. DEV / FIXED STATES / PLAYTESTER AI / AUDITOR PANEL -->
     <aside id="dev-panel" class="floating-panel hidden">
       <div class="panel-header">
-        <span>🤖 States & AI</span>
+        <span>🤖 States &amp; AI</span>
         <button id="btn-close-dev" class="close-btn">✕</button>
       </div>
       <div class="dev-body">
         <div class="state-btns" data-module="buttons.preset_state_loader">
-          <button class="tiny-btn" data-state="STATE_0_BOOT">S0:Lab</button>
-          <button class="tiny-btn" data-state="STATE_1_TECH_TREE">S1:Album/Tech</button>
+          <button class="tiny-btn" data-state="STATE_0_BOOT">S0:Lab(1Mac)</button>
+          <button class="tiny-btn" data-state="STATE_1_TECH_TREE">S1:Album</button>
           <button class="tiny-btn" data-state="STATE_2_NIGHT_FIRST_SCRATCH">S2:Scratch</button>
-          <button class="tiny-btn" data-state="STATE_3_MID_RAID_ACTION">S3:Raid</button>
-          <button class="tiny-btn" data-state="STATE_4_PRESTIGE_STRESS">S4:Mob🔥</button>
+          <button class="tiny-btn" data-state="STATE_3_MID_RAID_ACTION">S3:15Houses</button>
+          <button class="tiny-btn" data-state="STATE_4_PRESTIGE_STRESS">S4:Prestige🔥</button>
         </div>
         <div class="ai-btns" data-module="functionalities.playtester_ai">
           <button id="btn-ai-scratcher" class="tiny-btn">🤖 Scratcher</button>
