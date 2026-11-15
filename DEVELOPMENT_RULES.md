@@ -129,5 +129,10 @@ Autonomous bot module (`functionalities.playtester_ai`) with 3 archetypes:
 
 ---
 
-## 7. STATE FILE (`STATE.md`)
-Tracked in [`STATE.md`](./STATE.md) and updated on every iteration with current grade, Fixed State matrix, and the **Top 10 Problems / Defects Backlog**.
+## 7. STATE FILE (`STATE.md`) & GITHUB PAGES DEPLOYMENT
+- Tracked in [`STATE.md`](./STATE.md) and updated on every iteration with current grade, Fixed State matrix, and the **Top 10 Problems / Defects Backlog**.
+- **GitHub Pages Live Mobile Hosting**:
+  - Repository: `https://github.com/n1111ce/FrankenScratcher`
+  - Live Mobile URL: `https://n1111ce.github.io/FrankenScratcher/`
+  - All assets (`assets/*.jpg`, `assets/parts/*.png`) use relative paths and are committed & pushed to `main` after every iteration so the user can always test directly on their phone via GitHub Pages.
+
