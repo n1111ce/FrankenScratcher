@@ -210,27 +210,57 @@ When you return to the rebuilt Lab after the mob raid, the **Tech Tree zooms out
 
 ---
 
-## 5. Art Pipeline & Code-Driven Puppet Animation
+## 5. *Booster Pack Heroes* Pixel-Art Style & Standalone Assets
 
-### Gemini-Generated Visual Assets (`image-generator`)
-- **Backgrounds & Environments**:
-  - **The Lab Room**: Cozy/spooky mad-scientist laboratory with stone walls, Tesla coils, Phobia vats, and the central **Monster Scratch-Card Machine**.
-  - **The Clustered Night Village**: Cozy hillside/cluster of dark sleeping cottages surrounding the larger **Central Boss House**.
-  - **HUD Elements**: tactile brass/wood/galvanic frames, scratch card templates, and phobia badges.
-- **Modular Monster Part Frames (Animated via Code!)**:
-  - Each monster part is generated as an isolated, clean 2D sprite frame:
-    1. **`head` frame** (e.g., Franken-head, Kraken octopus head, Bug head, Eyeball head)
-    2. **`torso` frame** (stitched coat, barnacle chest, chitin shell)
-    3. **`left_hand` & `right_hand` frames** (spooky claws, tentacles, pincers)
-    4. **`legs` frame** (heavy boots, crab legs, spring legs)
-  - **Code Puppet Animations ("Pop & Booga-Booga Wiggle")**:
-    - **Slide / Pop Up from Under**: When a card finishes scratching, the stitched monster pops up from behind/under a sleeping house's window (`translateY(100%) -> translateY(0%)` with spring bounce).
-    - **Scare Wiggle ("Hands by Ears")**: The monster's `left_hand` and `right_hand` pivot up next to its `head` (`🙌`), while the `head` and `hands` wiggle rapidly left-and-right (`sin(t * 18) * 12deg`) right outside the dark window trying to scare the kids/sailors inside!
-    - **Window Lights-On Reaction**: The dark window flashes bright warm yellow (`💡`), the house roof does a quick vertical hop (`scaleY(1.12)`), and a tiny silhouette inside jumps!
+### Visual Direction (16-Bit Pixel Art)
+- **Inspired by *Booster Pack Heroes***: Crisp retro 16-bit pixel art (`image-rendering: pixelated`), chunky pixel outlines, retro card frames, and tactile foil sheen.
+- **Village Map Layout**:
+  - **Background**: Simple, clean **dark green pixel-art grass clearing** framed by **pixelated pine trees around the periphery (edges)** so the center playfield is high-contrast and never visually cluttered.
+  - **Standalone Pixel House Assets**: Each house is its own standalone pixel-art sprite (not baked into the background).
+    - **Sleeping State**: Dark pixel windows + floating `💤`.
+    - **Scared State (`Lights ON`)**: Swaps to bright warm yellow pixel windows (`💡`), shakes/bounces, and pops `👻` Scream Essence.
+- **Pixel Monster Part Frames & Code Puppet Animation**:
+  - Each Monster Set has 4 standalone pixel-art part sprites (`Head`, `Torso`, `Hands`, `Legs`).
+  - When a card is scratched, the stitched pixel monster **pops up from under a house's window**, raises its **Hands near its ears (`🙌`)**, and **wiggles its Head and Hands side-to-side** until the house lights turn ON!
 
 ---
 
-## 6. Locked-In Mobile Layout: Portrait Full-Screen + Auto-Tucking Card Hand
+## 6. Starting Title Screen, Interactive Tutorial & Minimal Text
+
+### Starting Screen (`hud.start_screen`)
+- **`[🎓 PLAY + TUTORIAL]`** — Starts with a step-by-step visual hand pointer (`👆`) and 2-word prompts.
+- **`[▶ PLAY (NO TUTORIAL)]`** — Jumps straight into the Lab with all HUD unlocked.
+- **`[⚙️ OPTIONS]`** — Sound/SFX toggle, Haptics toggle, Auto-Tuck speed, Export/Import Save, Hard Reset.
+- **`[📜 CREDITS]`** — Clean retro pixel credits box.
+
+### Step-by-Step Visual Tutorial (Zero Confusion, Max 3 Words per Prompt)
+1. **Step 1 (Lab)**: Bouncing `👆` points at the **Monster Machine** $\rightarrow$ `"1. Print Card 🃏"`
+2. **Step 2 (Lab)**: Bouncing `👆` points at **`[🌙 RAID ▶]`** $\rightarrow$ `"2. Go to Village 🌙"`
+3. **Step 3 (Village)**: Bouncing `👆` points at the **Bottom Card** $\rightarrow$ `"3. Tap Card 👆"`
+4. **Step 4 (Scratch)**: Animated `👆` swipes across the **4 Silver Foil Zones** $\rightarrow$ `"4. Scratch 4 Spots! 🪙"`
+5. **Step 5 (Watch!)**: Card tucks down; stitched monster pops under a house window and turns **Lights ON (`💡`)** $\rightarrow$ `"Lights ON = Scared! 🎉"`
+
+---
+
+## 7. Customizable Lab Machines & Unlockable Monster Collection
+
+### Customizable Lab Machine Slots (`hud.lab_machines`)
+The Lab features **3 Customizable Machine Slots** where players can install, upgrade, and tune different card-printing machines:
+1. **Machine #1 — Monster Part Printer (Starter)**:
+   - Prints **4-Zone Monster Scratch Cards** (`Head`, `Torso`, `Hands`, `Legs`).
+   - Player can select which unlocked Monster Set to bias (`🧟 Franken`, `🐙 Kraken`, `🎃 Pumpkin`, `🧛 Vampyr`).
+2. **Machine #2 — Atmosphere Card Printer (Unlockable)**:
+   - Prints **Atmosphere / Weather Scratch Cards** (`🌧️ Thunder Storm`, `🌫️ Spooky Fog`, `🌕 Blood Moon`).
+   - Scratching an Atmosphere Card during the Night Raid changes the village weather and grants a global raid bonus (`+50% Scare Power`, `+12s Night Timer`, or `2x Scream Essence`).
+3. **Machine #3 — Spooky Prop Printer (Unlockable)**:
+   - Prints **Haunted Yard Props** (`🎃 Scarecrow`, `🕯️ Poltergeist Lantern`) that deploy next to houses and passively drain their courage all night.
+
+### Unlockable Monster Sets & Full-Pack Collection Bonus (`hud.monster_album`)
+- Players unlock new **Monster Sets** (`🧟 Franken Golem`, `🐙 Deep Kraken`, `🎃 Pumpkin Fiend`, `🧛 Night Vampyr`).
+- Scratching off parts discovers `Head`, `Torso`, `Hands`, and `Legs` in the **Monster Pack Album (`0/4` $\rightarrow$ `4/4`)**.
+- **Complete Pack Bonus (`4/4 Collected`)**:
+  - Completing all 4 parts of a Monster Set permanently unlocks its **Full Pack Mastery Bonus** (`+50% Scare Power` for that set + global `👻` boost)!
+  - Scratching a card where all 4 parts match a completed set spawns an **Awakened Super-Scary Monster** (larger scale, glowing pixel aura, `2.5x` Scare Damage)!
 
 ### Screen Architecture (`9:16` Portrait Primary)
 - **Full-Screen Stage (`100%` Height)**:

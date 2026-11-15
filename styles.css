@@ -1,14 +1,11 @@
-/* FrankenScratcher — Portrait Full-Screen Mobile & Desktop Styles */
+/* FrankenScratcher — Iteration 2: Booster Pack Heroes 16-Bit Pixel Style */
 :root {
-  --bg-dark: #0b0d19;
-  --panel-bg: rgba(18, 22, 41, 0.92);
+  --bg-dark: #0c140e;
+  --lab-floor: #181426;
   --gold: #ffd43b;
   --essence: #63e6be;
   --torch: #ff6b35;
-  --kraken: #ae3ec9;
-  --franken: #51cf66;
-  --window-off: rgba(15, 21, 38, 0.92);
-  --window-on: #ffe066;
+  --pixel-border: #000000;
 }
 
 * {
@@ -16,6 +13,7 @@
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
+  image-rendering: pixelated;
 }
 
 html, body {
@@ -24,15 +22,14 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #06070f;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #060907;
+  font-family: 'Courier New', Consolas, monospace, system-ui;
   color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* Portrait Mobile Container (Full screen on mobile, phone frame on desktop) */
 #app-shell {
   position: relative;
   width: 100vw;
@@ -41,8 +38,8 @@ html, body {
   max-height: 960px;
   background: var(--bg-dark);
   overflow: hidden;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
-  border: 2px solid #252b48;
+  box-shadow: 0 0 0 4px #000, 0 0 40px rgba(0, 0, 0, 0.95);
+  border: 3px solid #3a4e3d;
 }
 
 @media (max-width: 500px) {
@@ -57,60 +54,213 @@ html, body {
   display: none !important;
 }
 
+/* 0. STARTING TITLE SCREEN */
+.start-bg-trees {
+  position: absolute;
+  inset: 0;
+  background-image: url('assets/pixel_village_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.75);
+  z-index: 1;
+}
+
+.start-content {
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 36px 20px 32px;
+}
+
+.title-logo-box {
+  background: rgba(14, 20, 34, 0.92);
+  border: 4px solid #000;
+  box-shadow: inset 0 0 0 3px #ffd43b, 0 8px 0 rgba(0, 0, 0, 0.7);
+  border-radius: 12px;
+  padding: 18px 16px;
+  text-align: center;
+  width: 100%;
+}
+
+.pixel-badge {
+  display: inline-block;
+  background: #5f3dc4;
+  border: 2px solid #000;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #ffd43b;
+  margin-bottom: 6px;
+}
+
+.pixel-title {
+  margin: 4px 0 12px;
+  font-size: 2.3rem;
+  line-height: 1.05;
+  font-weight: 900;
+  color: #51cf66;
+  text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+}
+
+.pixel-title span {
+  color: #ffd43b;
+}
+
+.title-showcase-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.showcase-sprite {
+  width: 66px;
+  height: 66px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 0 #000);
+  animation: floatPulse 2.2s ease-in-out infinite;
+}
+
+.showcase-sprite.house-prev {
+  width: 88px;
+  height: 82px;
+}
+
+.start-menu-btns {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.start-sub-row {
+  display: flex;
+  gap: 10px;
+}
+
+.pixel-btn {
+  border: 3px solid #000;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 1rem;
+  color: #fff;
+  cursor: pointer;
+  text-shadow: 2px 2px 0 #000;
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.35), 0 5px 0 #000;
+  transition: transform 0.08s;
+  flex: 1;
+}
+
+.pixel-btn:active {
+  transform: translateY(3px);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2), 0 2px 0 #000;
+}
+
+.green-px { background: #2b8a3e; }
+.gold-px { background: #e67700; }
+.blue-px { background: #1971c2; }
+.purple-px { background: #6741d9; }
+.red-px { background: #c92a2a; }
+
 /* 1. TOP HUD BAR */
 #top-bar {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  right: 8px;
-  z-index: 40;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  z-index: 45;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 5px;
-  background: rgba(12, 16, 33, 0.85);
-  backdrop-filter: blur(6px);
-  padding: 6px 10px;
-  border-radius: 16px;
-  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  gap: 4px;
+  background: #14192e;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 3px solid #000;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.18), 0 4px 0 rgba(0, 0, 0, 0.6);
 }
 
 .stat-pill {
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(0, 0, 0, 0.45);
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-weight: 800;
-  font-size: 0.95rem;
+  background: #0b0e1a;
+  border: 2px solid #2b3563;
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-weight: 900;
+  font-size: 0.9rem;
 }
 
-.torch-pill {
-  border: 1px solid rgba(255, 107, 53, 0.5);
-}
-
-.timer-pill {
-  background: rgba(112, 72, 232, 0.45);
-  border: 1px solid #9775fa;
-}
+.torch-pill { border-color: var(--torch); }
+.timer-pill { background: #3b2868; border-color: #ffd43b; }
 
 .top-tools {
   display: flex;
-  gap: 4px;
+  gap: 3px;
 }
 
 .icon-btn {
   background: #232a4d;
-  border: 1px solid #48548c;
+  border: 2px solid #000;
   color: #fff;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  padding: 3px 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #000;
+}
+
+/* GUIDED TUTORIAL FLOATING BANNER & PULSING SPOTLIGHT */
+#tutorial-banner {
+  position: absolute;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 55;
+  background: #ffd43b;
+  color: #000;
+  border: 3px solid #000;
   border-radius: 10px;
-  padding: 4px 7px;
+  padding: 6px 12px;
+  font-weight: 900;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 5px 0 #000;
+  white-space: nowrap;
+  animation: floatPulse 1.1s ease-in-out infinite;
+}
+
+#tutorial-hand {
+  font-size: 1.25rem;
+}
+
+.tiny-skip-btn {
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
   cursor: pointer;
 }
 
-/* 2. FULL-SCREEN STAGES */
+.tut-highlight {
+  outline: 4px solid #ffd43b !important;
+  box-shadow: 0 0 22px #ffd43b, 0 5px 0 #000 !important;
+  animation: tutBounce 0.65s infinite alternate !important;
+}
+
+/* 2. STAGES */
 .stage-screen {
   position: absolute;
   inset: 0;
@@ -132,203 +282,241 @@ html, body {
   z-index: 1;
 }
 
-.lab-bg {
-  background-image: url('assets/lab_room.jpg');
+/* Pixel Lab Tiled Dungeon Floor */
+.lab-pixel-bg {
+  background-color: #191528;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 2px, transparent 2px);
+  background-size: 32px 32px;
 }
 
-.village-bg {
-  background-image: url('assets/village_night.jpg');
+/* Simple Dark Green Pixel Grass with Pixelated Pine Trees on Periphery! */
+.village-pixel-bg {
+  background-image: url('assets/pixel_village_bg.jpg');
+  background-size: 100% 100%;
 }
 
-/* LAB VIEW WIDGETS */
-#quest-stamps {
+/* LAB TOP STRIP (Quests + Boss Phobia Clue) */
+#lab-top-strip {
   position: absolute;
-  top: 58px;
-  left: 10px;
-  right: 10px;
+  top: 54px;
+  left: 8px;
+  right: 8px;
   z-index: 15;
   display: flex;
-  justify-content: space-between;
-  gap: 6px;
+  align-items: center;
+  gap: 5px;
 }
 
 .quest-chip {
   flex: 1;
-  background: rgba(15, 20, 40, 0.88);
-  border: 1.5px solid #4c5892;
-  border-radius: 12px;
-  padding: 5px 6px;
+  background: #14192e;
+  border: 2px solid #000;
+  box-shadow: inset 0 0 0 1px #4c5892, 0 3px 0 #000;
+  border-radius: 6px;
+  padding: 4px 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 0.82rem;
+  font-size: 0.76rem;
+  font-weight: 900;
 }
 
 .quest-chip.done {
-  border-color: var(--gold);
-  background: rgba(65, 52, 14, 0.9);
+  background: #3b3110;
+  box-shadow: inset 0 0 0 2px var(--gold), 0 3px 0 #000;
 }
 
 .quest-chip .reward {
-  background: rgba(255, 107, 53, 0.25);
-  padding: 2px 5px;
-  border-radius: 8px;
-  font-weight: 800;
+  color: var(--torch);
 }
 
-/* Boss Phobia Clue Bubble */
-#boss-clue-card {
-  position: absolute;
-  top: 104px;
-  right: 12px;
-  z-index: 15;
-  background: rgba(14, 19, 38, 0.92);
-  border: 2px solid #fcc419;
-  border-radius: 18px;
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-  animation: floatPulse 2.6s ease-in-out infinite;
-}
-
-.boss-mini-house {
-  font-size: 1.45rem;
-}
-
-.phobia-thought {
+#boss-clue-mini {
+  background: #2b1d38;
+  border: 2px solid #000;
+  box-shadow: inset 0 0 0 2px #ffd43b, 0 3px 0 #000;
+  border-radius: 6px;
+  padding: 3px 6px;
   display: flex;
   align-items: center;
   gap: 4px;
-  background: #fff;
-  color: #111;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-weight: 900;
-  font-size: 1.1rem;
-}
-
-.mult-badge {
-  background: #e03131;
-  color: #fff;
   font-size: 0.78rem;
-  padding: 2px 5px;
-  border-radius: 6px;
+  font-weight: 900;
 }
 
-/* Lab Machine Hotspot */
-#lab-machine-widget {
+.mini-boss-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+/* 3 CUSTOMIZABLE LAB MACHINE SLOTS */
+#lab-machines-grid {
   position: absolute;
-  left: 50%;
-  top: 52%;
-  transform: translate(-50%, -50%);
+  top: 98px;
+  bottom: 88px;
+  left: 10px;
+  right: 10px;
   z-index: 15;
   display: flex;
   flex-direction: column;
+  justify-content: space-evenly;
+  gap: 8px;
+}
+
+.machine-slot {
+  background: rgba(20, 26, 48, 0.95);
+  border: 3px solid #000;
+  box-shadow: inset 0 0 0 2px #3b4878, 0 5px 0 #000;
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.machine-slot.unlocked {
+  box-shadow: inset 0 0 0 2px #51cf66, 0 5px 0 #000;
+}
+
+.machine-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
-}
-
-.machine-card-counter {
-  background: rgba(10, 14, 28, 0.9);
-  border: 2.5px solid var(--gold);
-  border-radius: 18px;
-  padding: 8px 18px;
-  font-size: 1.5rem;
+  font-size: 0.82rem;
   font-weight: 900;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+  color: #ffd43b;
 }
 
-.dial-btn {
-  background: linear-gradient(135deg, #3b2868, #1d3557);
-  border: 2px solid #a5d8ff;
+.mini-dial-btn {
+  background: #2b3563;
+  border: 2px solid #000;
   color: #fff;
-  border-radius: 14px;
-  padding: 8px 14px;
-  font-size: 1.1rem;
-  font-weight: 800;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 900;
   cursor: pointer;
+}
+
+.atmo-bonus-tag {
+  background: #102538;
+  border: 1px solid #4dabf7;
+  color: #74c0fc;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.74rem;
+}
+
+.machine-body {
   display: flex;
   align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  justify-content: space-between;
+  gap: 12px;
 }
 
-/* Lab Controls Footer */
+.machine-sprite {
+  width: 82px;
+  height: 76px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 0 #000);
+}
+
+.machine-actions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.printed-badge {
+  background: #0b0e1a;
+  border: 2px solid #3f4b82;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.95rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+/* Lab Bottom Controls */
 #lab-controls {
   position: absolute;
-  bottom: 16px;
-  left: 10px;
-  right: 10px;
+  bottom: 12px;
+  left: 8px;
+  right: 8px;
   z-index: 20;
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .game-btn {
   flex: 1;
-  border: none;
-  border-radius: 16px;
-  padding: 12px 8px;
+  border: 3px solid #000;
+  border-radius: 10px;
+  padding: 10px 6px;
   color: #fff;
+  font-family: inherit;
   font-weight: 900;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.45), 0 8px 18px rgba(0, 0, 0, 0.5);
-  transition: transform 0.1s;
+  gap: 3px;
+  text-shadow: 2px 2px 0 #000;
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.3), 0 5px 0 #000;
 }
 
 .game-btn:active {
   transform: translateY(3px);
 }
 
-.big-icon {
-  font-size: 1.25rem;
-}
-
+.big-icon { font-size: 1.05rem; }
 .cost-tag {
-  font-size: 0.85rem;
-  background: rgba(0, 0, 0, 0.35);
-  padding: 2px 8px;
-  border-radius: 10px;
+  font-size: 0.74rem;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
-.gold-btn {
-  background: linear-gradient(180deg, #f59f00, #d9480f);
-}
+.blue-btn { background: #1971c2; }
+.purple-btn { background: #6741d9; }
+.fire-btn { background: #d9480f; }
+.green-btn { flex: 1.3; background: #2b8a3e; }
 
-.purple-btn {
-  background: linear-gradient(180deg, #7950f2, #5f3dc4);
-}
-
-.fire-btn {
-  background: linear-gradient(180deg, #ff6b35, #c92a2a);
-  animation: pulseGlow 1.1s infinite alternate;
-}
-
-.green-btn {
-  flex: 1.35;
-  background: linear-gradient(180deg, #40c057, #2b8a3e);
-}
-
-/* 3. VILLAGE NIGHT MAP & HOUSES */
+/* 3. PIXEL VILLAGE MAP & STANDALONE HOUSE SPRITES */
 .floating-retreat-btn {
   position: absolute;
-  top: 58px;
-  left: 10px;
+  top: 52px;
+  left: 8px;
   z-index: 30;
-  background: rgba(18, 22, 41, 0.9);
-  border: 1.5px solid #748ffc;
+  background: #14192e;
+  border: 3px solid #000;
   color: #fff;
-  font-size: 1.1rem;
-  padding: 6px 12px;
-  border-radius: 12px;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 8px;
   cursor: pointer;
+  box-shadow: 0 3px 0 #000;
+}
+
+#active-atmosphere-banner {
+  position: absolute;
+  top: 52px;
+  right: 8px;
+  z-index: 30;
+  background: #1864ab;
+  border: 3px solid #000;
+  box-shadow: inset 0 0 0 2px #74c0fc, 0 3px 0 #000;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  font-weight: 900;
 }
 
 #village-houses-layer,
@@ -340,107 +528,34 @@ html, body {
   pointer-events: none;
 }
 
-/* Individual Village House Node */
+/* Standalone Pixel House Sprite Container */
 .house-node {
   position: absolute;
   transform: translate(-50%, -50%);
-  width: 86px;
-  height: 78px;
+  width: 96px;
+  height: 92px;
   pointer-events: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  transition: transform 0.2s;
 }
 
 .house-node.boss-house {
-  width: 140px;
-  height: 118px;
+  width: 138px;
+  height: 126px;
 }
 
-/* Glowing Windows Overlay inside each House */
-.house-windows {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-  padding: 5px 8px;
-  border-radius: 8px;
-  background: rgba(8, 12, 24, 0.55);
-  border: 1.5px solid rgba(255, 255, 255, 0.14);
-}
-
-.win-pane {
-  width: 14px;
-  height: 18px;
-  border-radius: 3px;
-  background: var(--window-off);
-  border: 1.5px solid #2b3454;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-
-.boss-house .win-pane {
-  width: 18px;
-  height: 22px;
-}
-
-/* Sleeping State ("Zzz") */
-.house-status-badge {
-  position: absolute;
-  top: -8px;
-  font-size: 0.9rem;
-  font-weight: 900;
-  background: rgba(10, 14, 28, 0.82);
-  padding: 2px 6px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Boss Phobia Badge in Village */
-.boss-phobia-pill {
-  position: absolute;
-  top: -24px;
-  background: #fff;
-  color: #111;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 900;
-  border: 2px solid #fcc419;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
-}
-
-/* House Courage Bar */
-.courage-bar-wrap {
-  width: 72%;
-  height: 7px;
-  background: rgba(0, 0, 0, 0.75);
-  border-radius: 5px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-}
-
-.courage-bar-fill {
+.house-sprite-img {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, #4dabf7, #3bc9db);
-  transition: width 0.15s;
+  height: 82%;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 0 rgba(0, 0, 0, 0.75));
+  transition: filter 0.2s;
 }
 
-/* House Defense Shield Badge */
-.house-defense-badge {
-  position: absolute;
-  left: -6px;
-  bottom: 8px;
-  font-size: 1rem;
-  filter: drop-shadow(0 2px 4px #000);
-}
-
-/* LIGHTS ON! (Scared House State) */
-.house-node.lights-on .win-pane {
-  background: var(--window-on);
-  border-color: #fff;
-  box-shadow: 0 0 16px #ffd43b, 0 0 28px #f59f00;
+.house-node.lights-on .house-sprite-img {
+  filter: drop-shadow(0 0 12px #ffd43b) drop-shadow(0 5px 0 #000);
 }
 
 .house-node.lights-on {
@@ -448,96 +563,148 @@ html, body {
 }
 
 .house-node.being-scared {
-  animation: houseRattle 0.22s infinite alternate;
+  animation: houseRattle 0.2s infinite alternate;
 }
 
-/* 4. CODE-ANIMATED STITCHED MONSTER PUPPET ("Pop from Under & Wiggle") */
+.house-status-badge {
+  position: absolute;
+  top: -8px;
+  font-size: 0.8rem;
+  font-weight: 900;
+  background: #0b0e1a;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 2px solid #000;
+  z-index: 4;
+}
+
+.boss-phobia-pill {
+  position: absolute;
+  top: -24px;
+  background: #ffd43b;
+  color: #000;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  border: 2px solid #000;
+  z-index: 5;
+}
+
+.courage-bar-wrap {
+  width: 78%;
+  height: 8px;
+  background: #000;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 2px solid #000;
+  margin-top: 2px;
+}
+
+.courage-bar-fill {
+  width: 100%;
+  height: 100%;
+  background: #3bc9db;
+  transition: width 0.15s;
+}
+
+/* 4. PIXEL MONSTER PUPPET ("Pop from Under & Wiggle Hands by Ears") */
 #village-monsters-layer {
   z-index: 18;
 }
 
-/* Bush / Under-Window Clip Mask so monster pops up from underneath! */
 .monster-pop-slot {
   position: absolute;
-  width: 110px;
-  height: 115px;
-  transform: translate(-50%, -40%);
+  width: 100px;
+  height: 105px;
+  transform: translate(-50%, -35%);
   overflow: hidden;
   pointer-events: none;
+}
+
+/* Mastered Full-Pack Monster Super Scary Aura! */
+.monster-pop-slot.super-scary .monster-puppet {
+  filter: drop-shadow(0 0 8px #ffd43b) drop-shadow(0 0 14px #ff6b35);
 }
 
 .monster-puppet {
   position: absolute;
   left: 50%;
   bottom: 4px;
-  width: 86px;
-  height: 98px;
+  width: 82px;
+  height: 92px;
   transform: translateX(-50%) translateY(100%);
-  animation: popFromUnder 0.42s cubic-bezier(0.22, 1.35, 0.5, 1) forwards;
+  animation: popFromUnder 0.4s cubic-bezier(0.22, 1.35, 0.5, 1) forwards;
 }
 
-/* Individual PNG Rigged Parts */
 .puppet-legs {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 46px;
+  width: 44px;
   transform: translateX(-50%);
   z-index: 1;
 }
 
 .puppet-torso {
   position: absolute;
-  bottom: 20px;
+  bottom: 18px;
   left: 50%;
-  width: 52px;
+  width: 48px;
   transform: translateX(-50%);
   z-index: 2;
 }
 
 .puppet-head {
   position: absolute;
-  bottom: 48px;
+  bottom: 44px;
   left: 50%;
-  width: 48px;
+  width: 44px;
   transform: translateX(-50%);
   transform-origin: 50% 85%;
   z-index: 4;
-  animation: headWiggleScare 0.24s ease-in-out infinite alternate;
+  animation: headWiggleScare 0.22s ease-in-out infinite alternate;
 }
 
-/* Hands positioned right up near the monster's ears & wiggling! */
 .puppet-hand-l {
   position: absolute;
-  bottom: 50px;
+  bottom: 46px;
   left: 0px;
-  width: 26px;
+  width: 24px;
   transform-origin: 70% 85%;
   z-index: 5;
-  animation: handLeftEarWiggle 0.18s ease-in-out infinite alternate;
+  animation: handLeftEarWiggle 0.16s ease-in-out infinite alternate;
 }
 
 .puppet-hand-r {
   position: absolute;
-  bottom: 50px;
+  bottom: 46px;
   right: 0px;
-  width: 26px;
+  width: 24px;
   transform-origin: 30% 85%;
   z-index: 5;
-  animation: handRightEarWiggle 0.18s ease-in-out infinite alternate-reverse;
+  animation: handRightEarWiggle 0.16s ease-in-out infinite alternate-reverse;
 }
 
-/* Under-window ledge/bush foreground lip */
 .window-bush-lip {
   position: absolute;
   bottom: 0;
-  left: 10%;
-  width: 80%;
-  height: 10px;
-  background: linear-gradient(90deg, #1b4332, #2d6a4f, #1b4332);
-  border-radius: 8px;
-  border-top: 2px solid #52b788;
+  left: 12%;
+  width: 76%;
+  height: 9px;
+  background: #1b4332;
+  border-radius: 4px;
+  border: 2px solid #000;
   z-index: 6;
+}
+
+/* Spooky Yard Prop Deployed on Map */
+.deployed-prop {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 1.8rem;
+  filter: drop-shadow(0 3px 0 #000);
+  animation: headWiggleScare 0.4s infinite alternate;
 }
 
 /* 5. 4-STATE AUTO-TUCKING BOTTOM CARD HAND DOCK */
@@ -550,38 +717,32 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: auto;
 }
 
-/* STATE 1: TUCKED (Mostly hidden under bottom so player watches the village!) */
 #card-hand-dock.hand-state-tucked {
-  transform: translateY(62%);
+  transform: translateY(64%);
 }
 
-/* STATE 2: RAISED (Cards slid up so player can pick one) */
-#card-hand-dock.hand-state-raised {
-  transform: translateY(0%);
-}
-
-/* STATE 3: FOCUSED_SCRATCH (Enlarged card ready to scratch) */
+#card-hand-dock.hand-state-raised,
 #card-hand-dock.hand-state-focused {
   transform: translateY(0%);
 }
 
 #card-hand-handle {
-  background: linear-gradient(180deg, #2b345c, #181e38);
-  border: 2px solid #ffd43b;
+  background: #232a4d;
+  border: 3px solid #000;
   border-bottom: none;
-  border-radius: 18px 18px 0 0;
-  padding: 6px 20px;
+  box-shadow: inset 0 2px 0 #ffd43b;
+  border-radius: 12px 12px 0 0;
+  padding: 6px 18px;
   font-weight: 900;
-  font-size: 1rem;
+  font-size: 0.92rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.7);
 }
 
 #card-fan-container {
@@ -589,34 +750,38 @@ html, body {
   justify-content: center;
   align-items: flex-end;
   gap: 8px;
-  padding: 12px 14px 18px;
+  padding: 12px 10px 18px;
   width: 100%;
-  background: linear-gradient(180deg, rgba(14, 18, 36, 0.92), rgba(8, 10, 22, 0.98));
-  border-top: 2px solid rgba(255, 212, 59, 0.4);
-  min-height: 132px;
+  background: rgba(12, 16, 30, 0.95);
+  border-top: 3px solid #000;
+  min-height: 128px;
+  overflow-x: auto;
 }
 
-/* Mini Card in Fan */
 .mini-scratch-card {
-  width: 74px;
-  height: 102px;
-  background: linear-gradient(145deg, #2d3561, #191f3a);
-  border: 2.5px solid #ffd43b;
-  border-radius: 12px;
+  width: 72px;
+  height: 98px;
+  background: #232a4d;
+  border: 3px solid #000;
+  box-shadow: inset 0 0 0 2px #ffd43b, 0 4px 0 #000;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  padding: 6px;
+  padding: 5px;
   cursor: pointer;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.65);
-  transition: transform 0.2s, border-color 0.2s;
+  flex-shrink: 0;
 }
 
-.mini-scratch-card:hover,
-.mini-scratch-card:active {
-  transform: translateY(-10px) scale(1.08);
-  border-color: #fff;
+.mini-scratch-card.card-type-atmo {
+  box-shadow: inset 0 0 0 2px #4dabf7, 0 4px 0 #000;
+  background: #122840;
+}
+
+.mini-scratch-card.card-type-prop {
+  box-shadow: inset 0 0 0 2px #ff922b, 0 4px 0 #000;
+  background: #331d12;
 }
 
 .mini-card-grid {
@@ -627,26 +792,26 @@ html, body {
 }
 
 .mini-foil-dot {
-  height: 24px;
-  background: linear-gradient(135deg, #ced4da, #868e96);
-  border-radius: 4px;
+  height: 22px;
+  background: #adb5bd;
+  border: 1px solid #000;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
 }
 
 /* ENLARGED FOCUSED SCRATCH CARD */
 #focused-card-modal {
   width: 92%;
   max-width: 370px;
-  background: linear-gradient(160deg, #242b4d, #13172b);
-  border: 3px solid var(--gold);
-  border-radius: 22px;
-  padding: 12px;
-  margin-bottom: 14px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.9);
-  animation: zoomCardIn 0.24s cubic-bezier(0.22, 1.3, 0.5, 1);
+  background: #1a203b;
+  border: 4px solid #000;
+  box-shadow: inset 0 0 0 2px var(--gold), 0 10px 0 #000;
+  border-radius: 14px;
+  padding: 10px;
+  margin-bottom: 12px;
 }
 
 .focused-card-header {
@@ -654,32 +819,36 @@ html, body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 900;
+  color: var(--gold);
 }
 
 .mini-close-btn {
   background: #36406e;
-  border: 1px solid #748ffc;
+  border: 2px solid #000;
   color: #fff;
-  border-radius: 8px;
-  padding: 4px 10px;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-family: inherit;
+  font-weight: 900;
   cursor: pointer;
 }
 
 #scratch-zones-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 8px;
   touch-action: none;
 }
 
 .scratch-slot {
   position: relative;
-  height: 104px;
-  background: radial-gradient(circle, #2b3359 0%, #161b33 100%);
-  border: 2px solid #5c6bc0;
-  border-radius: 14px;
+  height: 102px;
+  background: #101426;
+  border: 3px solid #000;
+  box-shadow: inset 0 0 0 2px #4c5892;
+  border-radius: 10px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -687,13 +856,7 @@ html, body {
 }
 
 .scratch-slot.scratched-done {
-  border-color: var(--franken);
-  box-shadow: 0 0 12px rgba(81, 207, 102, 0.6);
-}
-
-.scratch-slot.foil-holo {
-  border-color: var(--gold);
-  background: radial-gradient(circle, #5f4b18 0%, #241c08 100%);
+  box-shadow: inset 0 0 0 2px #51cf66;
 }
 
 .revealed-part-img {
@@ -707,7 +870,7 @@ html, body {
   position: absolute;
   top: 4px;
   right: 6px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   z-index: 2;
 }
 
@@ -721,23 +884,34 @@ html, body {
   touch-action: none;
 }
 
-/* Floating VFX Pop */
-.vfx-pop {
+/* Dawn Summary Toast */
+#dawn-summary-toast {
   position: absolute;
-  font-size: 1.25rem;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  background: #14192e;
+  border: 4px solid #000;
+  box-shadow: inset 0 0 0 2px #ffd43b, 0 8px 0 #000;
+  border-radius: 12px;
+  padding: 16px 24px;
+  text-align: center;
   font-weight: 900;
-  pointer-events: none;
-  animation: floatUpFade 0.9s ease-out forwards;
-  text-shadow: 0 2px 6px #000;
 }
 
-/* 6. MODALS & TECH TREE */
+.dawn-title {
+  color: #ffd43b;
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+
+/* 6. MODALS, MONSTER ALBUM & TECH TREE */
 .modal-overlay {
   position: absolute;
   inset: 0;
-  z-index: 60;
-  background: rgba(5, 7, 16, 0.82);
-  backdrop-filter: blur(5px);
+  z-index: 65;
+  background: rgba(5, 7, 16, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -748,8 +922,9 @@ html, body {
   width: 100%;
   max-height: 86%;
   background: #161b33;
-  border: 2px solid #4c5892;
-  border-radius: 20px;
+  border: 4px solid #000;
+  box-shadow: inset 0 0 0 2px #4c5892, 0 8px 0 #000;
+  border-radius: 12px;
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -762,37 +937,96 @@ html, body {
   justify-content: space-between;
   align-items: center;
   font-weight: 900;
-  font-size: 1.1rem;
-}
-
-.modal-currencies {
-  display: flex;
-  gap: 10px;
+  font-size: 1rem;
+  color: var(--gold);
 }
 
 .close-btn {
   background: #c92a2a;
-  border: none;
+  border: 2px solid #000;
   color: #fff;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   font-weight: 900;
   cursor: pointer;
 }
 
+.album-subtitle {
+  font-size: 0.78rem;
+  background: #0b0e1a;
+  padding: 6px 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.album-pack-card {
+  background: #1f2647;
+  border: 3px solid #000;
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.album-pack-card.mastered {
+  box-shadow: inset 0 0 0 2px var(--gold);
+  background: #2b2612;
+}
+
+.album-pack-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 900;
+  font-size: 0.88rem;
+}
+
+.album-parts-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.album-part-box {
+  height: 54px;
+  background: #0b0e1a;
+  border: 2px solid #3f4b82;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.album-part-box.collected {
+  border-color: #51cf66;
+  background: #132a19;
+}
+
+.album-part-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.album-part-box.locked img {
+  filter: brightness(0) invert(0.25);
+}
+
+/* Tech Grid */
 .tech-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   overflow-y: auto;
-  padding-right: 4px;
 }
 
 .tech-node-card {
   background: #1f2647;
-  border: 2px solid #3f4b82;
-  border-radius: 14px;
+  border: 3px solid #000;
+  border-radius: 8px;
   padding: 8px;
   display: flex;
   flex-direction: column;
@@ -802,62 +1036,94 @@ html, body {
 }
 
 .tech-node-card.prestige-node {
-  background: linear-gradient(145deg, #3b1c16, #241118);
-  border-color: var(--torch);
+  background: #3b1c16;
+  box-shadow: inset 0 0 0 2px var(--torch);
 }
 
 .tech-node-card.maxed {
-  border-color: var(--franken);
-  opacity: 0.85;
+  box-shadow: inset 0 0 0 2px #51cf66;
 }
 
-.tech-icon {
-  font-size: 1.5rem;
-}
-
-.tech-title {
-  font-size: 0.82rem;
-  font-weight: 800;
-  text-align: center;
-}
-
+.tech-icon { font-size: 1.4rem; }
+.tech-title { font-size: 0.78rem; font-weight: 900; text-align: center; }
 .tech-meta {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  font-size: 0.78rem;
-  background: rgba(0, 0, 0, 0.35);
+  font-size: 0.74rem;
+  background: rgba(0, 0, 0, 0.45);
   padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Options & Credits */
+.options-body, .credits-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.88rem;
+}
+
+.opt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0b0e1a;
+  padding: 8px 10px;
   border-radius: 6px;
+  font-weight: 900;
+}
+
+.opt-btns-row {
+  display: flex;
+  gap: 6px;
+}
+
+#save-io-box {
+  width: 100%;
+  background: #0b0e1a;
+  color: #51cf66;
+  border: 2px solid #3f4b82;
+  border-radius: 6px;
+  padding: 6px;
+  font-family: monospace;
+  font-size: 0.75rem;
 }
 
 /* Angry Mob Cutscene */
 .mob-cutscene-box {
-  background: radial-gradient(circle, #5c1916, #1a0707);
-  border: 3px solid var(--torch);
-  border-radius: 24px;
-  padding: 24px;
+  background: #4a1210;
+  border: 4px solid #000;
+  box-shadow: inset 0 0 0 3px var(--torch);
+  border-radius: 14px;
+  padding: 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  font-size: 2.1rem;
-  animation: houseRattle 0.18s infinite alternate;
+  gap: 12px;
+  font-size: 1.6rem;
+  font-weight: 900;
 }
 
-/* 7. DESIGNER MODE (hx) & DEV PANELS */
+/* Designer & Dev Floating Panels */
 .floating-panel {
   position: absolute;
-  top: 56px;
-  right: 8px;
-  width: 250px;
-  z-index: 70;
-  background: rgba(15, 19, 36, 0.95);
-  border: 2px solid #748ffc;
-  border-radius: 16px;
-  padding: 10px;
-  font-size: 0.82rem;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
+  top: 52px;
+  right: 6px;
+  width: 245px;
+  z-index: 75;
+  background: #14192e;
+  border: 3px solid #000;
+  box-shadow: inset 0 0 0 2px #748ffc, 0 6px 0 #000;
+  border-radius: 10px;
+  padding: 8px;
+  font-size: 0.78rem;
+}
+
+.designer-hint {
+  font-size: 0.7rem;
+  color: #ffd43b;
+  margin-bottom: 4px;
 }
 
 .panel-header {
@@ -876,9 +1142,7 @@ html, body {
   margin: 4px 0;
 }
 
-.compact-row input[type="range"] {
-  flex: 1;
-}
+.compact-row input[type="range"] { flex: 1; }
 
 .designer-btns, .state-btns, .ai-btns, .checklist-actions {
   display: flex;
@@ -889,23 +1153,24 @@ html, body {
 
 .tiny-btn {
   background: #2b3563;
-  border: 1px solid #5c6bc0;
+  border: 2px solid #000;
   color: #fff;
-  border-radius: 6px;
-  padding: 4px 7px;
-  font-size: 0.75rem;
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 0.72rem;
   cursor: pointer;
 }
 
 .hx-log {
-  max-height: 90px;
+  max-height: 80px;
   overflow-y: auto;
-  background: rgba(0, 0, 0, 0.45);
-  border-radius: 8px;
-  padding: 4px 6px;
+  background: #0b0e1a;
+  border-radius: 4px;
+  padding: 4px;
   margin-top: 6px;
-  font-family: monospace;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
 }
 
 .scroll-list {
@@ -913,7 +1178,7 @@ html, body {
   max-height: 360px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .mod-item {
@@ -922,16 +1187,24 @@ html, body {
   gap: 8px;
   padding: 4px 6px;
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  font-size: 0.82rem;
+  border-radius: 4px;
+  font-size: 0.78rem;
 }
 
 .audit-box {
   margin-top: 6px;
   padding: 4px 6px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 6px;
-  font-family: monospace;
+  background: #0b0e1a;
+  border-radius: 4px;
+}
+
+.vfx-pop {
+  position: absolute;
+  font-size: 1.05rem;
+  font-weight: 900;
+  pointer-events: none;
+  animation: floatUpFade 0.9s ease-out forwards;
+  text-shadow: 2px 2px 0 #000;
 }
 
 /* KEYFRAME ANIMATIONS */
@@ -942,8 +1215,8 @@ html, body {
 }
 
 @keyframes headWiggleScare {
-  0% { transform: translateX(-50%) rotate(-14deg) translateY(0px); }
-  100% { transform: translateX(-50%) rotate(14deg) translateY(-3px); }
+  0% { transform: translateX(-50%) rotate(-14deg); }
+  100% { transform: translateX(-50%) rotate(14deg); }
 }
 
 @keyframes handLeftEarWiggle {
@@ -963,26 +1236,21 @@ html, body {
 
 @keyframes houseScaredJump {
   0% { transform: translate(-50%, -50%) scale(1); }
-  40% { transform: translate(-50%, -62%) scale(1.15); }
+  40% { transform: translate(-50%, -60%) scale(1.14); }
   100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-@keyframes zoomCardIn {
-  0% { transform: translateY(80px) scale(0.5); opacity: 0.3; }
-  100% { transform: translateY(0) scale(1); opacity: 1; }
-}
-
 @keyframes floatUpFade {
-  0% { transform: translateY(0) scale(0.8); opacity: 1; }
-  100% { transform: translateY(-42px) scale(1.2); opacity: 0; }
+  0% { transform: translateY(0) scale(0.9); opacity: 1; }
+  100% { transform: translateY(-38px) scale(1.15); opacity: 0; }
 }
 
 @keyframes floatPulse {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
+  50% { transform: translateY(-4px); }
 }
 
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 6px #ff6b35; }
-  100% { box-shadow: 0 0 18px #ffd43b; }
+@keyframes tutBounce {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.06); }
 }

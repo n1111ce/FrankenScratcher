@@ -1,4 +1,4 @@
-// FrankenScratcher — Core Modular Engine (Iteration 1)
+// FrankenScratcher — Iteration 2: 16-Bit Pixel Edition (Booster Pack Heroes Style)
 (() => {
   'use strict';
 
@@ -6,21 +6,28 @@
   // 1. ELEMENTS CHECKLIST TREE REGISTRY
   // =========================================================================
   const MODULE_TREE = [
+    { id: 'hud.start_screen', label: '/hud/start_screen', enabled: true, simple: true },
+    { id: 'hud.tutorial_overlay', label: '/hud/tutorial_overlay', enabled: true, simple: true },
     { id: 'hud.top_bar', label: '/hud/top_bar', enabled: true, simple: true },
     { id: 'hud.lab_screen', label: '/hud/lab_screen', enabled: true, simple: true },
+    { id: 'hud.monster_album', label: '/hud/monster_album', enabled: true, simple: false },
     { id: 'hud.quest_stamps', label: '/hud/quest_stamps', enabled: true, simple: false },
     { id: 'hud.tech_tree_modal', label: '/hud/tech_tree_modal', enabled: true, simple: false },
     { id: 'hud.village_map', label: '/hud/village_map', enabled: true, simple: true },
     { id: 'hud.card_scratch_dock', label: '/hud/card_scratch_dock', enabled: true, simple: true },
+    { id: 'hud.options_credits_modals', label: '/hud/options_credits_modals', enabled: true, simple: false },
     { id: 'hud.module_tree_modal', label: '/hud/module_tree_modal', enabled: true, simple: true },
     { id: 'hud.designer_panel', label: '/hud/designer_panel', enabled: true, simple: true },
     { id: 'buttons.buy_card', label: '/buttons/buy_card', enabled: true, simple: true },
+    { id: 'buttons.open_monster_album', label: '/buttons/open_monster_album', enabled: true, simple: false },
     { id: 'buttons.open_tech_tree', label: '/buttons/open_tech_tree', enabled: true, simple: false },
     { id: 'buttons.phobia_dial', label: '/buttons/phobia_dial', enabled: true, simple: false },
     { id: 'buttons.trigger_mob_prestige', label: '/buttons/trigger_mob_prestige', enabled: true, simple: false },
     { id: 'buttons.start_night', label: '/buttons/start_night', enabled: true, simple: true },
     { id: 'buttons.preset_state_loader', label: '/buttons/preset_state_loader', enabled: true, simple: true },
     { id: 'characters.card_4zones', label: '/characters/card_4zones', enabled: true, simple: true },
+    { id: 'characters.atmosphere_cards', label: '/characters/atmosphere_cards', enabled: true, simple: false },
+    { id: 'characters.prop_cards', label: '/characters/prop_cards', enabled: true, simple: false },
     { id: 'characters.stitched_monster', label: '/characters/stitched_monster', enabled: true, simple: true },
     { id: 'characters.outer_houses', label: '/characters/outer_houses', enabled: true, simple: true },
     { id: 'characters.boss_house', label: '/characters/boss_house', enabled: true, simple: true },
@@ -53,7 +60,143 @@
   };
 
   // =========================================================================
-  // 2. PROCEDURAL WEBAUDIO SYNTHESIZER (Zero External Audio Dependencies)
+  // 2. MONSTER SETS & COLLECTION ALBUM DEFINITIONS
+  // =========================================================================
+  const MONSTER_SETS = [
+    {
+      id: 'franken',
+      name: '🧟 Franken Golem',
+      icon: '🧟',
+      unlockCost: 0,
+      baseMult: 1.0,
+      desc: 'Starter Set'
+    },
+    {
+      id: 'kraken',
+      name: '🐙 Deep Kraken',
+      icon: '🐙',
+      unlockCost: 10,
+      baseMult: 1.3,
+      desc: '3x vs Sailor Boss!'
+    },
+    {
+      id: 'pumpkin',
+      name: '🎃 Pumpkin Fiend',
+      icon: '🎃',
+      unlockCost: 18,
+      baseMult: 1.7,
+      desc: '1.7x Scare Power!'
+    }
+  ];
+
+  const ATMOSPHERE_TYPES = [
+    { id: 'storm', icon: '🌧️', label: '🌧️ Storm (+50%💥)', mult: 1.5, bonusTime: 0, essenceMult: 1 },
+    { id: 'fog', icon: '🌫️', label: '🌫️ Fog (+15s🌙)', mult: 1.15, bonusTime: 15, essenceMult: 1 },
+    { id: 'bloodmoon', icon: '🌕', label: '🌕 Moon (2x👻)', mult: 1.2, bonusTime: 0, essenceMult: 2 }
+  ];
+
+  // =========================================================================
+  // 3. TECH TREE & VILLAGE COORDINATES
+  // =========================================================================
+  const TECH_NODES = [
+    { id: 'A1', icon: '🃏+1', title: 'Card Hopper', max: 5, baseCost: 5, currency: 'essence' },
+    { id: 'B1', icon: '🪙🔍', title: 'Big Scratch', max: 5, baseCost: 5, currency: 'essence' },
+    { id: 'B2', icon: '⚡〰️', title: 'Quick Foil', max: 3, baseCost: 8, currency: 'essence' },
+    { id: 'B4', icon: '✨🃏', title: 'Holo Parts', max: 5, baseCost: 10, currency: 'essence' },
+    { id: 'C5', icon: '🧬🎯', title: 'Set Focus', max: 3, baseCost: 8, currency: 'essence' },
+    { id: 'D1', icon: '🌙⏱️', title: 'Longer Night', max: 5, baseCost: 6, currency: 'essence' },
+    { id: 'D3', icon: '💡💥', title: 'Chain Scare', max: 3, baseCost: 10, currency: 'essence' },
+    { id: 'P1', icon: '🔥🏦', title: '2x👻 & +2🃏', max: 3, baseCost: 1, currency: 'torches', prestigeOnly: true },
+    { id: 'P2', icon: '🤖〰️', title: 'Auto-Laser', max: 1, baseCost: 2, currency: 'torches', prestigeOnly: true },
+    { id: 'P3', icon: '👯🧟', title: 'Twin Spawn', max: 2, baseCost: 2, currency: 'torches', prestigeOnly: true },
+    { id: 'P4', icon: '⭐🃏', title: '5th Slot', max: 1, baseCost: 3, currency: 'torches', prestigeOnly: true }
+  ];
+
+  // Standalone Pixel House Coordinates inside the dark-green clearing of `pixel_village_bg.jpg`
+  const VILLAGE_LAYOUT = [
+    { id: 'boss_0', isBoss: true, x: 50, y: 27, maxCourage: 220, phobia: 'kraken' },
+    { id: 'house_1', isBoss: false, x: 27, y: 43, maxCourage: 42 },
+    { id: 'house_2', isBoss: false, x: 73, y: 43, maxCourage: 42 },
+    { id: 'house_3', isBoss: false, x: 25, y: 60, maxCourage: 52 },
+    { id: 'house_4', isBoss: false, x: 75, y: 60, maxCourage: 52 },
+    { id: 'house_5', isBoss: false, x: 38, y: 74, maxCourage: 60 },
+    { id: 'house_6', isBoss: false, x: 64, y: 74, maxCourage: 60 }
+  ];
+
+  // =========================================================================
+  // 4. GAME STATE
+  // =========================================================================
+  const state = {
+    phase: 'START', // 'START' | 'LAB' | 'VILLAGE'
+    tutorialActive: false,
+    tutorialStep: 0, // 1: Buy/Print Card, 2: Start Raid, 3: Tap Card Dock, 4: Scratch 4 Spots, 5: Watch Scare!
+    sfxOn: true,
+    hapticsOn: true,
+    coins: 40,
+    essence: 0,
+    torches: 0,
+    prestigeCount: 0,
+    monsterCardsCount: 3,
+    atmoCardsCount: 0,
+    propCardsCount: 0,
+    cardCost: 10,
+    selectedSetBias: 'franken',
+    selectedAtmoIdx: 0,
+    machinesUnlocked: {
+      monster: true,
+      atmosphere: false,
+      prop: false
+    },
+    unlockedSets: {
+      franken: true,
+      kraken: false,
+      pumpkin: false
+    },
+    // Collected parts per set: { franken: { head: true, torso: false, ... } }
+    albumParts: {
+      franken: { head: false, torso: false, hands: false, legs: false },
+      kraken: { head: false, torso: false, hands: false, legs: false },
+      pumpkin: { head: false, torso: false, hands: false, legs: false }
+    },
+    techLevels: {},
+    quests: {
+      housesLit: 0,
+      housesLitClaimed: false,
+      krakensSpawned: 0,
+      krakensClaimed: false,
+      bossLit: 0,
+      bossClaimed: false
+    },
+    // Runtime Night Raid State
+    nightTimeLeft: 45,
+    activeAtmosphere: null,
+    handState: 'TUCKED',
+    cardsInHand: [],
+    activeCardIndex: -1,
+    houses: [],
+    monsters: [],
+    props: [],
+    nightEssenceEarned: 0,
+    errorsCount: 0
+  };
+
+  TECH_NODES.forEach((n) => {
+    state.techLevels[n.id] = 0;
+  });
+
+  const getTechLvl = (id) => (isModOn('functionalities.tech_tree_engine') ? (state.techLevels[id] || 0) : 0);
+
+  function isSetMastered(setId) {
+    const p = state.albumParts[setId];
+    return Boolean(p && p.head && p.torso && p.hands && p.legs);
+  }
+
+  function getMasteredSetsCount() {
+    return MONSTER_SETS.filter((s) => isSetMastered(s.id)).length;
+  }
+
+  // =========================================================================
+  // 5. PROCEDURAL WEBAUDIO SFX
   // =========================================================================
   let audioCtx = null;
   function ensureAudio() {
@@ -67,7 +210,7 @@
   }
 
   function playSfx(type) {
-    if (!isModOn(`sounds.${type}`)) return;
+    if (!state.sfxOn || !isModOn(`sounds.${type}`)) return;
     try {
       ensureAudio();
       if (!audioCtx) return;
@@ -78,43 +221,43 @@
       gain.connect(audioCtx.destination);
 
       if (type === 'scratch_foil') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(520 + Math.random() * 280, now);
-        gain.gain.setValueAtTime(0.03, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(480 + Math.random() * 260, now);
+        gain.gain.setValueAtTime(0.025, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
         osc.start(now);
-        osc.stop(now + 0.045);
+        osc.stop(now + 0.04);
       } else if (type === 'stitch_zap') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(220, now);
-        osc.frequency.exponentialRampToValueAtTime(880, now + 0.18);
-        gain.gain.setValueAtTime(0.09, now);
+        osc.frequency.setValueAtTime(200, now);
+        osc.frequency.exponentialRampToValueAtTime(920, now + 0.18);
+        gain.gain.setValueAtTime(0.08, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
         osc.start(now);
         osc.stop(now + 0.2);
-        if (isModOn('sounds.haptics') && navigator.vibrate) navigator.vibrate(25);
+        if (state.hapticsOn && isModOn('sounds.haptics') && navigator.vibrate) navigator.vibrate(25);
       } else if (type === 'window_scare_pop') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(440, now);
-        osc.frequency.exponentialRampToValueAtTime(980, now + 0.16);
-        gain.gain.setValueAtTime(0.11, now);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(420, now);
+        osc.frequency.exponentialRampToValueAtTime(960, now + 0.16);
+        gain.gain.setValueAtTime(0.1, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
         osc.start(now);
         osc.stop(now + 0.18);
       } else if (type === 'boss_scare_fanfare') {
-        osc.type = 'triangle';
+        osc.type = 'square';
         osc.frequency.setValueAtTime(523.25, now);
         osc.frequency.setValueAtTime(659.25, now + 0.1);
         osc.frequency.setValueAtTime(1046.5, now + 0.2);
-        gain.gain.setValueAtTime(0.14, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        gain.gain.setValueAtTime(0.11, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
         osc.start(now);
-        osc.stop(now + 0.45);
+        osc.stop(now + 0.42);
       } else if (type === 'mob_raid_fire') {
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(160, now);
-        osc.frequency.linearRampToValueAtTime(90, now + 0.4);
-        gain.gain.setValueAtTime(0.12, now);
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(85, now + 0.4);
+        gain.gain.setValueAtTime(0.11, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
         osc.start(now);
         osc.stop(now + 0.42);
@@ -123,108 +266,244 @@
   }
 
   // =========================================================================
-  // 3. TECH TREE & PRESTIGE DEFINITIONS (Minimal Text — Max 3 Words!)
+  // 6. GUIDED STEP-BY-STEP TUTORIAL ENGINE (Minimal Text — Max 3 Words!)
   // =========================================================================
-  const TECH_NODES = [
-    // Normal Lab Tech Tree (Costs Scream Essence 👻)
-    { id: 'A1', icon: '🃏+1', title: 'Card Hopper', branch: 'A', max: 5, baseCost: 5, currency: 'essence' },
-    { id: 'B1', icon: '🪙🔍', title: 'Big Scratch', branch: 'B', max: 5, baseCost: 5, currency: 'essence' },
-    { id: 'B2', icon: '⚡〰️', title: 'Quick Foil', branch: 'B', max: 3, baseCost: 8, currency: 'essence' },
-    { id: 'B4', icon: '✨🃏', title: 'Holo Parts', branch: 'B', max: 5, baseCost: 10, currency: 'essence' },
-    { id: 'C2', icon: '🐙🧪', title: 'Kraken Vat', branch: 'C', max: 3, baseCost: 6, currency: 'essence' },
-    { id: 'C5', icon: '🧬🎯', title: 'Phobia Dial', branch: 'C', max: 3, baseCost: 8, currency: 'essence' },
-    { id: 'D1', icon: '🌙⏱️', title: 'Longer Night', branch: 'D', max: 5, baseCost: 6, currency: 'essence' },
-    { id: 'D3', icon: '💡💥', title: 'Chain Scare', branch: 'D', max: 3, baseCost: 12, currency: 'essence' },
+  function updateTutorialUI() {
+    const banner = document.getElementById('tutorial-banner');
+    const txt = document.getElementById('tutorial-text');
 
-    // Expanded Prestige Tech Tree (Unlocked after Angry Mob Raid! Costs 🔥 Torches)
-    { id: 'P1', icon: '🔥🏦', title: '2x👻 & +3🃏', branch: 'P', max: 3, baseCost: 1, currency: 'torches', prestigeOnly: true },
-    { id: 'P2', icon: '🤖〰️', title: 'Auto-Laser', branch: 'P', max: 1, baseCost: 2, currency: 'torches', prestigeOnly: true },
-    { id: 'P3', icon: '👯🧟', title: 'Twin Spawn', branch: 'P', max: 2, baseCost: 2, currency: 'torches', prestigeOnly: true },
-    { id: 'P4', icon: '⭐🃏', title: '5th Slot', branch: 'P', max: 1, baseCost: 3, currency: 'torches', prestigeOnly: true }
-  ];
+    // Clear old highlights
+    document.querySelectorAll('.tut-highlight').forEach((el) => el.classList.remove('tut-highlight'));
 
-  // Village Houses Layout matching `assets/village_night.jpg` coordinates (% of stage)
-  const VILLAGE_LAYOUT = [
-    // Central Sailor Boss House
-    { id: 'boss_0', isBoss: true, x: 50, y: 31, maxCourage: 240, phobia: 'kraken' },
-    // 6 Outer Sleeping Cottages
-    { id: 'house_1', isBoss: false, x: 24, y: 42, maxCourage: 45 },
-    { id: 'house_2', isBoss: false, x: 77, y: 42, maxCourage: 45 },
-    { id: 'house_3', isBoss: false, x: 14, y: 58, maxCourage: 55 },
-    { id: 'house_4', isBoss: false, x: 86, y: 58, maxCourage: 55 },
-    { id: 'house_5', isBoss: false, x: 37, y: 65, maxCourage: 65 },
-    { id: 'house_6', isBoss: false, x: 64, y: 65, maxCourage: 65 }
-  ];
-
-  // =========================================================================
-  // 4. GAME STATE
-  // =========================================================================
-  const state = {
-    phase: 'LAB', // 'LAB' | 'VILLAGE'
-    coins: 30,
-    essence: 0,
-    torches: 0,
-    prestigeCount: 0,
-    deckCount: 3,
-    cardCost: 10,
-    phobiaBias: 'balanced', // 'balanced' | 'kraken' | 'franken'
-    techLevels: {},
-    quests: {
-      housesLit: 0,
-      housesLitClaimed: false,
-      krakensSpawned: 0,
-      krakensClaimed: false,
-      bossLit: 0,
-      bossClaimed: false
-    },
-    // Night Raid runtime state
-    nightTimeLeft: 45,
-    handState: 'TUCKED', // 'TUCKED' | 'RAISED' | 'FOCUSED_SCRATCH'
-    cardsInHand: [],
-    activeCardIndex: -1,
-    houses: [],
-    monsters: [],
-    errorsCount: 0
-  };
-
-  TECH_NODES.forEach((n) => {
-    state.techLevels[n.id] = 0;
-  });
-
-  const getTechLvl = (id) => (isModOn('functionalities.tech_tree_engine') ? (state.techLevels[id] || 0) : 0);
-
-  // =========================================================================
-  // 5. CARD DECK & 4-ZONE SCRATCH SYSTEM
-  // =========================================================================
-  function generatePartFamily() {
-    let krakenChance = 0.35 + getTechLvl('C2') * 0.12;
-    if (state.phobiaBias === 'kraken') {
-      krakenChance += 0.25 + getTechLvl('C5') * 0.12;
-    } else if (state.phobiaBias === 'franken') {
-      krakenChance = 0.15;
+    if (!state.tutorialActive || !isModOn('hud.tutorial_overlay') || state.phase === 'START') {
+      banner.classList.add('hidden');
+      return;
     }
-    return Math.random() < Math.min(0.9, krakenChance) ? 'kraken' : 'franken';
+
+    banner.classList.remove('hidden');
+
+    if (state.tutorialStep === 1) {
+      txt.textContent = '1. Tap +1 🃏!';
+      document.getElementById('btn-buy-card')?.classList.add('tut-highlight');
+    } else if (state.tutorialStep === 2) {
+      txt.textContent = '2. Tap 🌙 RAID!';
+      document.getElementById('btn-start-night')?.classList.add('tut-highlight');
+    } else if (state.tutorialStep === 3) {
+      txt.textContent = '3. Tap Card 👆!';
+      document.getElementById('card-hand-handle')?.classList.add('tut-highlight');
+    } else if (state.tutorialStep === 4) {
+      txt.textContent = '4. Scratch 4 Spots!';
+      document.getElementById('focused-card-modal')?.classList.add('tut-highlight');
+    } else if (state.tutorialStep === 5) {
+      txt.textContent = 'Lights ON = Scared! 💡';
+      setTimeout(() => {
+        if (state.tutorialStep === 5) {
+          state.tutorialActive = false;
+          updateTutorialUI();
+        }
+      }, 3200);
+    }
   }
 
-  function createCardObject(idx) {
+  // =========================================================================
+  // 7. CUSTOMIZABLE LAB MACHINES & MONSTER ALBUM
+  // =========================================================================
+  function renderLabMachines() {
+    // Machine 2: Atmosphere Card Printer (Unlocks for 12 👻)
+    const m2Slot = document.getElementById('slot-machine-2');
+    const m2Actions = document.getElementById('machine-2-actions');
+    const atmoType = ATMOSPHERE_TYPES[state.selectedAtmoIdx];
+    document.getElementById('atmo-type-tag').textContent = atmoType.label;
+
+    if (m2Actions) {
+      m2Slot.classList.toggle('unlocked', state.machinesUnlocked.atmosphere);
+      if (!state.machinesUnlocked.atmosphere) {
+        m2Actions.innerHTML = `
+          <button id="btn-unlock-m2" class="pixel-btn purple-px">🔓 UNLOCK (👻12)</button>
+        `;
+        document.getElementById('btn-unlock-m2')?.addEventListener('click', () => {
+          if (state.essence >= 12) {
+            state.essence -= 12;
+            state.machinesUnlocked.atmosphere = true;
+            state.atmoCardsCount = 1;
+            playSfx('boss_scare_fanfare');
+            renderLabMachines();
+            updateTopHud();
+          }
+        });
+      } else {
+        m2Actions.innerHTML = `
+          <div style="display:flex;gap:4px;">
+            <div class="printed-badge" style="flex:1;">🌩️ <b>${state.atmoCardsCount}</b></div>
+            <button id="btn-cycle-atmo" class="mini-dial-btn">${atmoType.icon} 🔄</button>
+          </div>
+          <button id="btn-buy-atmo" class="pixel-btn blue-px">+1 🌩️ (🪙15)</button>
+        `;
+        document.getElementById('btn-cycle-atmo')?.addEventListener('click', () => {
+          state.selectedAtmoIdx = (state.selectedAtmoIdx + 1) % ATMOSPHERE_TYPES.length;
+          playSfx('scratch_foil');
+          renderLabMachines();
+        });
+        document.getElementById('btn-buy-atmo')?.addEventListener('click', () => {
+          if (state.coins >= 15) {
+            state.coins -= 15;
+            state.atmoCardsCount++;
+            playSfx('scratch_foil');
+            renderLabMachines();
+            updateTopHud();
+          }
+        });
+      }
+    }
+
+    // Machine 3: Spooky Yard Prop Printer (Unlocks for 20 👻)
+    const m3Slot = document.getElementById('slot-machine-3');
+    const m3Actions = document.getElementById('machine-3-actions');
+    if (m3Actions) {
+      m3Slot.classList.toggle('unlocked', state.machinesUnlocked.prop);
+      if (!state.machinesUnlocked.prop) {
+        m3Actions.innerHTML = `
+          <button id="btn-unlock-m3" class="pixel-btn purple-px">🔓 UNLOCK (👻20)</button>
+        `;
+        document.getElementById('btn-unlock-m3')?.addEventListener('click', () => {
+          if (state.essence >= 20) {
+            state.essence -= 20;
+            state.machinesUnlocked.prop = true;
+            state.propCardsCount = 1;
+            playSfx('boss_scare_fanfare');
+            renderLabMachines();
+            updateTopHud();
+          }
+        });
+      } else {
+        m3Actions.innerHTML = `
+          <div class="printed-badge">🎃 <b>${state.propCardsCount}</b></div>
+          <button id="btn-buy-prop" class="pixel-btn gold-px">+1 🎃 (🪙15)</button>
+        `;
+        document.getElementById('btn-buy-prop')?.addEventListener('click', () => {
+          if (state.coins >= 15) {
+            state.coins -= 15;
+            state.propCardsCount++;
+            playSfx('scratch_foil');
+            renderLabMachines();
+            updateTopHud();
+          }
+        });
+      }
+    }
+  }
+
+  function renderMonsterAlbumModal() {
+    document.getElementById('album-essence').textContent = String(Math.floor(state.essence));
+    const list = document.getElementById('monster-album-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    MONSTER_SETS.forEach((mset) => {
+      const unlocked = state.unlockedSets[mset.id];
+      const parts = state.albumParts[mset.id];
+      const count = ['head', 'torso', 'hands', 'legs'].filter((k) => parts[k]).length;
+      const mastered = count === 4;
+
+      const card = document.createElement('div');
+      card.className = 'album-pack-card' + (mastered ? ' mastered' : '');
+
+      let actionHtml = '';
+      if (!unlocked) {
+        actionHtml = `<button class="tiny-btn" data-unlock-set="${mset.id}">🔓 👻${mset.unlockCost}</button>`;
+      } else if (mastered) {
+        actionHtml = `<span style="color:#ffd43b;">⭐ FULL PACK (+50%💥)</span>`;
+      } else {
+        actionHtml = `<span>${count}/4 Parts</span>`;
+      }
+
+      card.innerHTML = `
+        <div class="album-pack-header">
+          <span>${mset.name} <small style="opacity:0.75;">(${mset.desc})</small></span>
+          ${actionHtml}
+        </div>
+        <div class="album-parts-row">
+          ${['head', 'torso', 'hands', 'legs']
+            .map((slot) => {
+              const hasIt = parts[slot];
+              const imgFile = slot === 'hands' ? `${mset.id}_hand_l.png` : `${mset.id}_${slot}.png`;
+              return `
+                <div class="album-part-box ${hasIt ? 'collected' : 'locked'}">
+                  <img src="assets/parts/${imgFile}" alt="${slot}" />
+                </div>
+              `;
+            })
+            .join('')}
+        </div>
+      `;
+
+      const unlockBtn = card.querySelector('[data-unlock-set]');
+      if (unlockBtn) {
+        unlockBtn.addEventListener('click', () => {
+          if (state.essence >= mset.unlockCost) {
+            state.essence -= mset.unlockCost;
+            state.unlockedSets[mset.id] = true;
+            state.selectedSetBias = mset.id;
+            playSfx('boss_scare_fanfare');
+            renderMonsterAlbumModal();
+            updateTopHud();
+          }
+        });
+      }
+
+      list.appendChild(card);
+    });
+  }
+
+  // =========================================================================
+  // 8. CARD GENERATION & 4-ZONE CONTINUOUS SCRATCHING
+  // =========================================================================
+  function pickMonsterFamilyForZone() {
+    const unlockedIds = MONSTER_SETS.filter((s) => state.unlockedSets[s.id]).map((s) => s.id);
+    if (unlockedIds.length === 1) return unlockedIds[0];
+
+    const focusChance = 0.55 + getTechLvl('C5') * 0.12;
+    if (unlockedIds.includes(state.selectedSetBias) && Math.random() < focusChance) {
+      return state.selectedSetBias;
+    }
+    return unlockedIds[Math.floor(Math.random() * unlockedIds.length)];
+  }
+
+  function createMonsterCardObject(idx) {
     const has5th = getTechLvl('P4') > 0;
     const holoChance = getTechLvl('B4') * 0.08;
     const slots = ['head', 'torso', 'hands', 'legs'];
     if (has5th) slots.push('aura');
 
-    const zones = slots.map((slotType) => {
-      const family = generatePartFamily();
-      const isHolo = Math.random() < holoChance;
-      return {
-        slotType,
-        family, // 'kraken' | 'franken'
-        isHolo,
-        scratchedPct: 0,
-        revealed: false
-      };
-    });
+    const zones = slots.map((slotType) => ({
+      slotType,
+      family: pickMonsterFamilyForZone(),
+      isHolo: Math.random() < holoChance,
+      scratchedPct: 0,
+      revealed: false
+    }));
 
-    return { id: `card_${Date.now()}_${idx}`, zones, completed: false };
+    return { id: `mcard_${Date.now()}_${idx}`, cardType: 'monster', zones, completed: false };
+  }
+
+  function createAtmosphereCardObject(idx) {
+    const atmo = ATMOSPHERE_TYPES[state.selectedAtmoIdx];
+    const zones = [0, 1].map((i) => ({
+      slotType: i === 0 ? 'sky' : 'boost',
+      atmo,
+      scratchedPct: 0,
+      revealed: false
+    }));
+    return { id: `acard_${Date.now()}_${idx}`, cardType: 'atmosphere', atmo, zones, completed: false };
+  }
+
+  function createPropCardObject(idx) {
+    const zones = [0, 1].map((i) => ({
+      slotType: i === 0 ? 'prop_head' : 'prop_base',
+      scratchedPct: 0,
+      revealed: false
+    }));
+    return { id: `pcard_${Date.now()}_${idx}`, cardType: 'prop', zones, completed: false };
   }
 
   function setHandState(newState) {
@@ -240,17 +519,17 @@
       dock.classList.add('hand-state-tucked');
       fan.classList.remove('hidden');
       focused.classList.add('hidden');
-      promptIcon.textContent = '👆 🃏';
+      promptIcon.textContent = '👆 CARDS';
     } else if (newState === 'RAISED') {
       dock.classList.add('hand-state-raised');
       fan.classList.remove('hidden');
       focused.classList.add('hidden');
-      promptIcon.textContent = '👇 🃏';
+      promptIcon.textContent = '👇 HIDE';
     } else if (newState === 'FOCUSED_SCRATCH') {
       dock.classList.add('hand-state-focused');
       fan.classList.add('hidden');
       focused.classList.remove('hidden');
-      promptIcon.textContent = '🪙 〰️';
+      promptIcon.textContent = '🪙 SCRATCH';
     }
   }
 
@@ -261,42 +540,46 @@
     leftBadge.textContent = String(remaining.length);
     fan.innerHTML = '';
 
-    if (remaining.length === 0) {
-      const emptyMsg = document.createElement('div');
-      emptyMsg.style.opacity = '0.7';
-      emptyMsg.style.fontWeight = '900';
-      emptyMsg.textContent = '🃏 0';
-      fan.appendChild(emptyMsg);
-      return;
-    }
-
     state.cardsInHand.forEach((card, idx) => {
       if (card.completed) return;
       const el = document.createElement('div');
-      el.className = 'mini-scratch-card';
-      el.innerHTML = `
-        <div class="mini-card-grid">
-          <div class="mini-foil-dot">🙂</div>
-          <div class="mini-foil-dot">👕</div>
-          <div class="mini-foil-dot">🖐️</div>
-          <div class="mini-foil-dot">🦵</div>
-        </div>
-        <span style="font-size:0.75rem;font-weight:900;">#${idx + 1}</span>
-      `;
+      el.className =
+        'mini-scratch-card' +
+        (card.cardType === 'atmosphere' ? ' card-type-atmo' : '') +
+        (card.cardType === 'prop' ? ' card-type-prop' : '');
+
+      if (card.cardType === 'monster') {
+        el.innerHTML = `
+          <div class="mini-card-grid">
+            <div class="mini-foil-dot">🙂</div>
+            <div class="mini-foil-dot">👕</div>
+            <div class="mini-foil-dot">🖐️</div>
+            <div class="mini-foil-dot">🦵</div>
+          </div>
+          <span style="font-size:0.7rem;font-weight:900;">🧟 #${idx + 1}</span>
+        `;
+      } else if (card.cardType === 'atmosphere') {
+        el.innerHTML = `
+          <div style="font-size:1.5rem;">${card.atmo.icon}</div>
+          <span style="font-size:0.68rem;font-weight:900;">WEATHER</span>
+        `;
+      } else {
+        el.innerHTML = `
+          <div style="font-size:1.5rem;">🎃</div>
+          <span style="font-size:0.68rem;font-weight:900;">PROP</span>
+        `;
+      }
+
       el.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (state.handState === 'TUCKED') {
-          setHandState('RAISED');
-        } else {
-          openCardForScratching(idx);
-        }
+        openCardForScratching(idx);
       });
       fan.appendChild(el);
     });
   }
 
   function getZonePartAsset(zone) {
-    const fam = zone.family;
+    const fam = zone.family || 'franken';
     if (zone.slotType === 'head') return `assets/parts/${fam}_head.png`;
     if (zone.slotType === 'torso') return `assets/parts/${fam}_torso.png`;
     if (zone.slotType === 'hands') return `assets/parts/${fam}_hand_l.png`;
@@ -309,6 +592,8 @@
     if (slotType === 'torso') return '👕';
     if (slotType === 'hands') return '🖐️';
     if (slotType === 'legs') return '🦵';
+    if (slotType === 'sky' || slotType === 'boost') return '🌩️';
+    if (slotType === 'prop_head' || slotType === 'prop_base') return '🎃';
     return '⭐';
   }
 
@@ -317,62 +602,73 @@
     state.activeCardIndex = cardIdx;
     setHandState('FOCUSED_SCRATCH');
 
+    if (state.tutorialActive && state.tutorialStep === 3) {
+      state.tutorialStep = 4;
+      updateTutorialUI();
+    }
+
     const card = state.cardsInHand[cardIdx];
     const grid = document.getElementById('scratch-zones-grid');
     grid.innerHTML = '';
 
-    const revealThreshold = Math.max(25, 58 - getTechLvl('B2') * 10);
-    const brushRadius = 22 + getTechLvl('B1') * 6;
+    const revealThreshold = Math.max(25, 55 - getTechLvl('B2') * 10);
+    const brushRadius = 24 + getTechLvl('B1') * 6;
 
     card.zones.forEach((zone) => {
       const slot = document.createElement('div');
       slot.className = 'scratch-slot' + (zone.isHolo ? ' foil-holo' : '') + (zone.revealed ? ' scratched-done' : '');
 
-      const img = document.createElement('img');
-      img.className = 'revealed-part-img';
-      img.src = getZonePartAsset(zone);
-      img.alt = zone.slotType;
+      if (card.cardType === 'monster') {
+        const img = document.createElement('img');
+        img.className = 'revealed-part-img';
+        img.src = getZonePartAsset(zone);
+        img.alt = zone.slotType;
+        slot.appendChild(img);
 
-      const badge = document.createElement('span');
-      badge.className = 'part-phobia-badge';
-      badge.textContent = (zone.family === 'kraken' ? '🐙' : '🧟') + (zone.isHolo ? '✨' : '');
-
-      slot.appendChild(img);
-      slot.appendChild(badge);
+        const setObj = MONSTER_SETS.find((s) => s.id === zone.family);
+        const badge = document.createElement('span');
+        badge.className = 'part-phobia-badge';
+        badge.textContent = (setObj ? setObj.icon : '🧟') + (zone.isHolo ? '✨' : '');
+        slot.appendChild(badge);
+      } else if (card.cardType === 'atmosphere') {
+        const iconEl = document.createElement('div');
+        iconEl.style.fontSize = '2.4rem';
+        iconEl.textContent = card.atmo.icon;
+        slot.appendChild(iconEl);
+      } else {
+        const iconEl = document.createElement('div');
+        iconEl.style.fontSize = '2.4rem';
+        iconEl.textContent = '🎃🕯️';
+        slot.appendChild(iconEl);
+      }
 
       if (!zone.revealed) {
         const canvas = document.createElement('canvas');
         canvas.className = 'scratch-foil-canvas';
         canvas.width = 150;
-        canvas.height = 104;
+        canvas.height = 102;
         slot.appendChild(canvas);
 
         const ctx = canvas.getContext('2d');
-        // Draw tactile metallic silver foil with anatomical silhouette
-        const grad = ctx.createLinearGradient(0, 0, 150, 104);
-        grad.addColorStop(0, '#dee2e6');
-        grad.addColorStop(0.5, '#adb5bd');
-        grad.addColorStop(1, '#868e96');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 150, 104);
+        ctx.fillStyle = '#adb5bd';
+        ctx.fillRect(0, 0, 150, 102);
 
-        // Diagonal metallic sheen stripes
-        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-        ctx.lineWidth = 6;
-        for (let i = -100; i < 220; i += 28) {
-          ctx.beginPath();
-          ctx.moveTo(i, 0);
-          ctx.lineTo(i + 60, 104);
-          ctx.stroke();
+        // Pixelated silver sheen stripes
+        ctx.fillStyle = '#dee2e6';
+        for (let i = 0; i < 150; i += 24) {
+          ctx.fillRect(i, 0, 8, 102);
         }
+        ctx.strokeStyle = '#495057';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(2, 2, 146, 98);
 
-        // Silhouette icon etched in center of foil
-        ctx.font = '32px sans-serif';
+        ctx.font = '32px monospace';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = 'rgba(30,35,55,0.65)';
-        ctx.fillText(getZoneSilhouetteIcon(zone.slotType), 75, 52);
+        ctx.fillStyle = '#212529';
+        ctx.fillText(getZoneSilhouetteIcon(zone.slotType), 75, 51);
 
+        let lastPt = null;
         const scratchAt = (clientX, clientY) => {
           if (!isModOn('actions.foil_scratch') || zone.revealed) return;
           const rect = canvas.getBoundingClientRect();
@@ -381,23 +677,31 @@
           if (x < 0 || x > canvas.width || y < 0 || y > canvas.height) return;
 
           ctx.globalCompositeOperation = 'destination-out';
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.lineWidth = brushRadius * 2;
           ctx.beginPath();
-          ctx.arc(x, y, brushRadius, 0, Math.PI * 2);
-          ctx.fill();
+          if (lastPt) {
+            ctx.moveTo(lastPt.x, lastPt.y);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+          } else {
+            ctx.arc(x, y, brushRadius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          lastPt = { x, y };
 
-          zone.scratchedPct = Math.min(100, zone.scratchedPct + 9 + getTechLvl('B1') * 2.5);
+          zone.scratchedPct = Math.min(100, zone.scratchedPct + 11 + getTechLvl('B1') * 3);
           playSfx('scratch_foil');
 
           if (zone.scratchedPct >= revealThreshold) {
-            zone.revealed = true;
-            canvas.remove();
-            slot.classList.add('scratched-done');
-            checkCardCompletion(card);
+            revealZoneNow(card, zone, canvas, slot);
           }
         };
 
         canvas.addEventListener('pointerdown', (e) => {
           canvas.setPointerCapture(e.pointerId);
+          lastPt = null;
           scratchAt(e.clientX, e.clientY);
         });
         canvas.addEventListener('pointermove', (e) => {
@@ -405,10 +709,29 @@
             scratchAt(e.clientX, e.clientY);
           }
         });
+        canvas.addEventListener('pointerup', () => {
+          lastPt = null;
+        });
       }
 
       grid.appendChild(slot);
     });
+  }
+
+  function revealZoneNow(card, zone, canvas, slot) {
+    if (zone.revealed) return;
+    zone.revealed = true;
+    if (canvas) canvas.remove();
+    if (slot) slot.classList.add('scratched-done');
+
+    // Register part in Monster Pack Collection Album!
+    if (card.cardType === 'monster' && zone.family && state.albumParts[zone.family]) {
+      if (['head', 'torso', 'hands', 'legs'].includes(zone.slotType)) {
+        state.albumParts[zone.family][zone.slotType] = true;
+      }
+    }
+
+    checkCardCompletion(card);
   }
 
   function checkCardCompletion(card) {
@@ -417,24 +740,62 @@
       card.completed = true;
       playSfx('stitch_zap');
 
-      // Brief delay so player sees the 4 revealed parts, then auto-tuck & spawn monster!
+      if (state.tutorialActive && state.tutorialStep === 4) {
+        state.tutorialStep = 5;
+        updateTutorialUI();
+      }
+
       setTimeout(() => {
         setHandState('TUCKED');
         renderCardFan();
-        if (isModOn('actions.monster_stitch_spawn')) {
+        updateTopHud();
+
+        if (card.cardType === 'monster' && isModOn('actions.monster_stitch_spawn')) {
           spawnStitchedMonsterFromCard(card);
-          // Prestige P3: Twin-Monster Press chance!
           const twinLvl = getTechLvl('P3');
           if (twinLvl > 0 && Math.random() < twinLvl * 0.5) {
-            setTimeout(() => spawnStitchedMonsterFromCard(card), 260);
+            setTimeout(() => spawnStitchedMonsterFromCard(card), 250);
           }
+        } else if (card.cardType === 'atmosphere' && isModOn('characters.atmosphere_cards')) {
+          activateAtmosphereEffect(card.atmo);
+        } else if (card.cardType === 'prop' && isModOn('characters.prop_cards')) {
+          deploySpookyProp();
         }
-      }, 280);
+      }, 260);
     }
   }
 
+  function activateAtmosphereEffect(atmo) {
+    state.activeAtmosphere = atmo;
+    if (atmo.bonusTime > 0) {
+      state.nightTimeLeft += atmo.bonusTime;
+    }
+    const banner = document.getElementById('active-atmosphere-banner');
+    const txt = document.getElementById('active-atmo-text');
+    if (banner && txt) {
+      txt.textContent = atmo.label;
+      banner.classList.remove('hidden');
+    }
+    spawnFloatingVfx(50, 45, `${atmo.label}!`);
+    updateTopHud();
+  }
+
+  function deploySpookyProp() {
+    const layer = document.getElementById('village-monsters-layer');
+    const propEl = document.createElement('div');
+    propEl.className = 'deployed-prop';
+    const x = 35 + Math.random() * 30;
+    const y = 45 + Math.random() * 22;
+    propEl.style.left = `${x}%`;
+    propEl.style.top = `${y}%`;
+    propEl.textContent = '🎃🕯️';
+    layer.appendChild(propEl);
+    state.props.push({ el: propEl, x, y, scareDps: 10 });
+    spawnFloatingVfx(x, y - 5, '🎃 PROP ACTIVE!');
+  }
+
   // =========================================================================
-  // 6. STITCHED MONSTER SPAWN & "POP FROM UNDER + WIGGLE" HOUSE SCARING
+  // 9. STITCHED MONSTER SPAWN & "POP FROM UNDER + WIGGLE" HOUSE SCARING
   // =========================================================================
   function spawnStitchedMonsterFromCard(card) {
     if (!isModOn('characters.stitched_monster')) return;
@@ -447,20 +808,21 @@
     const krakenPartsCount = card.zones.filter((z) => z.family === 'kraken').length;
     const holoCount = card.zones.filter((z) => z.isHolo).length;
 
-    // Quest 2 tracker: Kraken-head monsters spawned
     if (headZone.family === 'kraken') {
       state.quests.krakensSpawned++;
       checkQuestsProgress();
     }
 
-    // Full-set synergy bonus
+    const setInfo = MONSTER_SETS.find((s) => s.id === headZone.family) || MONSTER_SETS[0];
     const allSame = card.zones.every((z) => z.family === headZone.family);
-    const synergyMult = allSame ? 1.6 : 1.0;
+    const masteredBonus = isSetMastered(headZone.family) ? 1.5 : 1.0;
+    const fullSetSuperScary = allSame ? 1.8 : 1.0;
     const holoMult = 1 + holoCount * 0.5;
-    const baseScareDmg = Math.round(14 * synergyMult * holoMult * (1 + getTechLvl('C2') * 0.2));
+
+    const baseScareDmg = Math.round(15 * setInfo.baseMult * masteredBonus * fullSetSuperScary * holoMult);
 
     const slotEl = document.createElement('div');
-    slotEl.className = 'monster-pop-slot';
+    slotEl.className = 'monster-pop-slot' + (allSame || isSetMastered(headZone.family) ? ' super-scary' : '');
 
     slotEl.innerHTML = `
       <div class="monster-puppet">
@@ -481,8 +843,7 @@
       headFamily: headZone.family,
       krakenPartsCount,
       scarePower: baseScareDmg,
-      targetHouseId: null,
-      hopCooldown: 0
+      targetHouseId: null
     };
 
     state.monsters.push(monster);
@@ -490,7 +851,6 @@
   }
 
   function assignMonsterToNextHouse(monster) {
-    // Prefer unscared outer houses first, then Central Boss House
     const unscaredOuter = state.houses.filter((h) => !h.isBoss && !h.lightsOn);
     const bossHouse = state.houses.find((h) => h.isBoss && !h.lightsOn);
     let target = null;
@@ -506,17 +866,15 @@
     if (!target) return;
     monster.targetHouseId = target.id;
 
-    // Position the monster right under the target house's window ledge!
-    const offsetX = (Math.random() - 0.5) * 26;
-    monster.el.style.left = `${target.x + offsetX * 0.25}%`;
-    monster.el.style.top = `${target.y + (target.isBoss ? 8 : 6)}%`;
+    const offsetX = (Math.random() - 0.5) * 16;
+    monster.el.style.left = `${target.x + offsetX * 0.3}%`;
+    monster.el.style.top = `${target.y + (target.isBoss ? 7 : 5)}%`;
 
-    // Re-trigger pop-up from under animation!
     const puppet = monster.el.querySelector('.monster-puppet');
     if (puppet) {
       puppet.style.animation = 'none';
       void puppet.offsetWidth;
-      puppet.style.animation = 'popFromUnder 0.42s cubic-bezier(0.22, 1.35, 0.5, 1) forwards';
+      puppet.style.animation = 'popFromUnder 0.4s cubic-bezier(0.22, 1.35, 0.5, 1) forwards';
     }
   }
 
@@ -542,19 +900,17 @@
 
     house.el.classList.add('being-scared');
 
-    // Boss Phobia Multiplier: Sailor Boss House takes 3x from Kraken parts!
     let mult = 1.0;
     if (house.isBoss) {
       if (monster.headFamily === 'kraken' || monster.krakenPartsCount >= 2) {
         mult = 3.0;
       } else {
-        mult = 0.5;
+        mult = 0.6;
       }
     }
 
-    // House defenses reduction if enabled
-    if (isModOn('characters.house_defenses') && house.hasDefense) {
-      mult *= 0.65;
+    if (state.activeAtmosphere) {
+      mult *= state.activeAtmosphere.mult;
     }
 
     const dmg = monster.scarePower * mult * dtSec;
@@ -573,30 +929,40 @@
     house.el.classList.remove('being-scared');
     house.el.classList.add('lights-on');
 
-    const essenceMult = 1 + getTechLvl('P1');
+    // Swap standalone pixel house sprite from dark windows to glowing yellow windows!
+    const spriteImg = house.el.querySelector('.house-sprite-img');
+    if (spriteImg) {
+      spriteImg.src = house.isBoss ? 'assets/sprites/boss_on.png' : 'assets/sprites/cottage_on.png';
+    }
+
+    const atmoEssMult = state.activeAtmosphere ? state.activeAtmosphere.essenceMult : 1;
+    const albumMult = 1 + getMasteredSetsCount() * 0.25;
+    const essenceMult = (1 + getTechLvl('P1')) * atmoEssMult * albumMult;
+
     if (house.isBoss) {
       playSfx('boss_scare_fanfare');
-      const coinGain = 45;
-      const essGain = 15 * essenceMult;
+      const coinGain = 50;
+      const essGain = Math.round(16 * essenceMult);
       state.coins += coinGain;
       state.essence += essGain;
+      state.nightEssenceEarned += essGain;
       state.quests.bossLit = 1;
       spawnFloatingVfx(house.x, house.y - 6, `😱💡 +${essGain}👻 +${coinGain}🪙`);
     } else {
       playSfx('window_scare_pop');
-      const coinGain = 12;
-      const essGain = 4 * essenceMult;
+      const coinGain = 14;
+      const essGain = Math.round(5 * essenceMult);
       state.coins += coinGain;
       state.essence += essGain;
+      state.nightEssenceEarned += essGain;
       state.quests.housesLit++;
       spawnFloatingVfx(house.x, house.y - 4, `💡 +${essGain}👻`);
 
-      // Tech D3: Chain Panic shockwave to neighbor houses!
       const chainLvl = getTechLvl('D3');
       if (chainLvl > 0) {
         state.houses.forEach((other) => {
           if (!other.lightsOn && other.id !== house.id) {
-            other.courage = Math.max(0, other.courage - other.maxCourage * (0.12 * chainLvl));
+            other.courage = Math.max(0, other.courage - other.maxCourage * (0.14 * chainLvl));
             updateHouseVisual(other);
           }
         });
@@ -609,14 +975,14 @@
   }
 
   // =========================================================================
-  // 7. VILLAGE SETUP & RENDERING
+  // 10. STANDALONE PIXEL HOUSE VILLAGE BUILDER
   // =========================================================================
   function buildVillageHouses() {
     const layer = document.getElementById('village-houses-layer');
     layer.innerHTML = '';
     state.houses = [];
 
-    VILLAGE_LAYOUT.forEach((cfg, idx) => {
+    VILLAGE_LAYOUT.forEach((cfg) => {
       if (cfg.isBoss && !isModOn('characters.boss_house')) return;
       if (!cfg.isBoss && !isModOn('characters.outer_houses')) return;
 
@@ -626,17 +992,12 @@
       el.style.top = `${cfg.y}%`;
       el.setAttribute('data-design-id', cfg.id);
 
-      const hasDefense = isModOn('characters.house_defenses') && idx % 2 === 1;
+      const spriteSrc = cfg.isBoss ? 'assets/sprites/boss_off.png' : 'assets/sprites/cottage_off.png';
 
       el.innerHTML = `
         ${cfg.isBoss ? `<div class="boss-phobia-pill">⚓😱👉🐙x3</div>` : ''}
         <div class="house-status-badge">💤</div>
-        <div class="house-windows">
-          <div class="win-pane"></div>
-          <div class="win-pane"></div>
-          ${cfg.isBoss ? '<div class="win-pane"></div>' : ''}
-        </div>
-        ${hasDefense ? '<div class="house-defense-badge">🐕🏮</div>' : ''}
+        <img class="house-sprite-img" src="${spriteSrc}" alt="House" />
         <div class="courage-bar-wrap">
           <div class="courage-bar-fill"></div>
         </div>
@@ -651,7 +1012,6 @@
         maxCourage: cfg.maxCourage,
         courage: cfg.maxCourage,
         lightsOn: false,
-        hasDefense,
         el
       });
     });
@@ -678,49 +1038,108 @@
   }
 
   // =========================================================================
-  // 8. PHASE TRANSITIONS (LAB <-> NIGHT VILLAGE)
+  // 11. SCREEN NAVIGATION (START <-> LAB <-> NIGHT VILLAGE)
   // =========================================================================
+  function enterGameFromStart(withTutorial) {
+    state.tutorialActive = withTutorial;
+    state.tutorialStep = withTutorial ? 1 : 0;
+    document.getElementById('start-screen').classList.remove('active');
+    document.getElementById('top-bar').classList.remove('hidden');
+    returnToLab();
+  }
+
+  function showStartScreen() {
+    state.phase = 'START';
+    document.getElementById('start-screen').classList.add('active');
+    document.getElementById('lab-screen').classList.remove('active');
+    document.getElementById('village-screen').classList.remove('active');
+    document.getElementById('top-bar').classList.add('hidden');
+    document.getElementById('tutorial-banner').classList.add('hidden');
+  }
+
   function startNightRaid() {
     state.phase = 'VILLAGE';
+    document.getElementById('start-screen').classList.remove('active');
     document.getElementById('lab-screen').classList.remove('active');
     document.getElementById('village-screen').classList.add('active');
+    document.getElementById('top-bar').classList.remove('hidden');
     document.getElementById('night-timer-pill').classList.remove('hidden');
+    document.getElementById('active-atmosphere-banner').classList.add('hidden');
+    document.getElementById('dawn-summary-toast').classList.add('hidden');
 
     state.nightTimeLeft = 45 + getTechLvl('D1') * 8;
+    state.activeAtmosphere = null;
     state.monsters = [];
+    state.props = [];
+    state.nightEssenceEarned = 0;
+
     document.getElementById('village-monsters-layer').innerHTML = '';
     document.getElementById('village-vfx-layer').innerHTML = '';
 
     buildVillageHouses();
 
-    // Generate Scratch Cards for the Night
-    const totalCards = Math.max(1, state.deckCount);
+    // Build Night Hand from all 3 Lab Machines!
     state.cardsInHand = [];
-    for (let i = 0; i < totalCards; i++) {
-      state.cardsInHand.push(createCardObject(i));
+    for (let i = 0; i < Math.max(1, state.monsterCardsCount); i++) {
+      state.cardsInHand.push(createMonsterCardObject(i));
+    }
+    for (let i = 0; i < state.atmoCardsCount; i++) {
+      state.cardsInHand.push(createAtmosphereCardObject(i));
+    }
+    for (let i = 0; i < state.propCardsCount; i++) {
+      state.cardsInHand.push(createPropCardObject(i));
+    }
+
+    if (state.tutorialActive && state.tutorialStep === 2) {
+      state.tutorialStep = 3;
     }
 
     setHandState('TUCKED');
     renderCardFan();
     updateTopHud();
+    updateTutorialUI();
+  }
+
+  function finishNightWithSummary() {
+    const litCount = state.houses.filter((h) => h.lightsOn).length;
+    const toast = document.getElementById('dawn-summary-toast');
+    const stats = document.getElementById('dawn-stats');
+    if (toast && stats) {
+      stats.textContent = `🏠💡 ${litCount}/${state.houses.length} | +${state.nightEssenceEarned} 👻`;
+      toast.classList.remove('hidden');
+    }
+    setTimeout(() => {
+      if (toast) toast.classList.add('hidden');
+      returnToLab();
+    }, 1100);
   }
 
   function returnToLab() {
     state.phase = 'LAB';
+    document.getElementById('start-screen').classList.remove('active');
     document.getElementById('village-screen').classList.remove('active');
     document.getElementById('lab-screen').classList.add('active');
+    document.getElementById('top-bar').classList.remove('hidden');
     document.getElementById('night-timer-pill').classList.add('hidden');
 
-    // Replenish base nightly cards
-    const baseCards = 3 + getTechLvl('A1') + getTechLvl('P1') * 3;
-    if (state.deckCount < baseCards) {
-      state.deckCount = baseCards;
+    const baseCards = 3 + getTechLvl('A1') + getTechLvl('P1') * 2;
+    if (state.monsterCardsCount < baseCards) {
+      state.monsterCardsCount = baseCards;
     }
+    if (state.machinesUnlocked.atmosphere && state.atmoCardsCount < 1) {
+      state.atmoCardsCount = 1;
+    }
+    if (state.machinesUnlocked.prop && state.propCardsCount < 1) {
+      state.propCardsCount = 1;
+    }
+
+    renderLabMachines();
     updateTopHud();
+    updateTutorialUI();
   }
 
   // =========================================================================
-  // 9. QUESTS, TECH TREE & ANGRY VILLAGER MOB PRESTIGE
+  // 12. QUESTS, TECH TREE & ANGRY VILLAGER MOB PRESTIGE
   // =========================================================================
   function checkQuestsProgress() {
     if (!isModOn('functionalities.prestige_engine')) return;
@@ -749,7 +1168,6 @@
     document.getElementById('quest-2')?.classList.toggle('done', state.quests.krakensClaimed);
     document.getElementById('quest-3')?.classList.toggle('done', state.quests.bossClaimed);
 
-    // Show Angry Villager Mob Raid Prestige Button when player has >= 1 Torch!
     const mobBtn = document.getElementById('btn-mob-prestige');
     if (mobBtn && isModOn('buttons.trigger_mob_prestige')) {
       mobBtn.classList.toggle('hidden', state.torches < 1);
@@ -766,15 +1184,13 @@
     setTimeout(() => {
       overlay.classList.add('hidden');
       state.prestigeCount++;
-      state.coins = 30;
+      state.coins = 40;
       state.essence = 0;
 
-      // Reset standard tech nodes, keep Prestige P-nodes
       TECH_NODES.forEach((n) => {
         if (!n.prestigeOnly) state.techLevels[n.id] = 0;
       });
 
-      // Reset repeatable quest counters so player can earn more Torches
       state.quests.housesLit = 0;
       state.quests.housesLitClaimed = false;
       state.quests.krakensSpawned = 0;
@@ -782,10 +1198,10 @@
       state.quests.bossLit = 0;
       state.quests.bossClaimed = false;
 
-      state.deckCount = 3 + getTechLvl('P1') * 3;
+      state.monsterCardsCount = 3 + getTechLvl('P1') * 2;
       returnToLab();
       openTechTreeModal();
-    }, 1800);
+    }, 1600);
   }
 
   function getTechNodeCost(node) {
@@ -795,20 +1211,18 @@
 
   function openTechTreeModal() {
     if (!isModOn('hud.tech_tree_modal')) return;
-    const modal = document.getElementById('tech-tree-modal');
-    modal.classList.remove('hidden');
+    document.getElementById('tech-tree-modal').classList.remove('hidden');
     renderTechTreeNodes();
   }
 
   function renderTechTreeNodes() {
-    document.getElementById('tech-essence').textContent = String(state.essence);
-    document.getElementById('tech-torches').textContent = String(state.torches);
+    document.getElementById('tech-essence').textContent = String(Math.floor(state.essence));
+    document.getElementById('tech-torches').textContent = String(Math.floor(state.torches));
 
     const container = document.getElementById('tech-nodes-container');
     container.innerHTML = '';
 
     TECH_NODES.forEach((node) => {
-      // Prestige nodes appear after first Villager Mob Raid or when player has Torches
       if (node.prestigeOnly && state.prestigeCount === 0 && state.torches === 0) return;
 
       const lvl = state.techLevels[node.id] || 0;
@@ -847,12 +1261,12 @@
   }
 
   // =========================================================================
-  // 10. DESIGNER MODE WITH PERSISTENT HISTORY (`hx`)
+  // 13. DESIGNER MODE (`hx`) WITH STAGE CLICK-TO-SELECT
   // =========================================================================
-  const HX_STORAGE_KEY = 'frankenscratcher_designer_hx_v1';
+  const HX_STORAGE_KEY = 'frankenscratcher_designer_hx_v2';
   let designerState = {
-    transforms: {}, // { [designId]: { scale: 1, x: 0, y: 0 } }
-    hxStack: [], // Array of { ts, id, prev, next }
+    transforms: {},
+    hxStack: [],
     redoStack: []
   };
 
@@ -883,7 +1297,11 @@
     const el = document.querySelector(`[data-design-id="${designId}"]`);
     if (!el) return;
     const t = designerState.transforms[designId] || { scale: 1, x: 0, y: 0 };
-    el.style.transform = `translate(${t.x}px, ${t.y}px) scale(${t.scale})`;
+    if (el.classList.contains('house-node')) {
+      el.style.transform = `translate(calc(-50% + ${t.x}px), calc(-50% + ${t.y}px)) scale(${t.scale})`;
+    } else {
+      el.style.transform = `translate(${t.x}px, ${t.y}px) scale(${t.scale})`;
+    }
   }
 
   function applyAllSavedDesignerTransforms() {
@@ -952,59 +1370,80 @@
   }
 
   // =========================================================================
-  // 11. FIXED REVIEW STATES (`STATE_0` to `STATE_4`)
+  // 14. FIXED REVIEW STATES (`STATE_0` to `STATE_4`)
   // =========================================================================
+  function closeAllModals() {
+    document.getElementById('tech-tree-modal')?.classList.add('hidden');
+    document.getElementById('monster-album-modal')?.classList.add('hidden');
+    document.getElementById('checklist-modal')?.classList.add('hidden');
+    document.getElementById('options-modal')?.classList.add('hidden');
+    document.getElementById('credits-modal')?.classList.add('hidden');
+    document.getElementById('designer-panel')?.classList.add('hidden');
+  }
+
   function loadFixedReviewState(stateName) {
     if (!isModOn('functionalities.fixed_state_snapshots')) return;
     stopPlaytesterAI();
-    document.getElementById('tech-tree-modal').classList.add('hidden');
-    document.getElementById('checklist-modal').classList.add('hidden');
+    closeAllModals();
 
     if (stateName === 'STATE_0_BOOT') {
-      state.coins = 30;
-      state.essence = 0;
+      state.coins = 45;
+      state.essence = 15;
       state.torches = 0;
-      state.deckCount = 3;
-      state.phobiaBias = 'balanced';
+      state.monsterCardsCount = 3;
+      state.tutorialActive = true;
+      state.tutorialStep = 1;
       returnToLab();
     } else if (stateName === 'STATE_1_TECH_TREE') {
-      state.coins = 50;
-      state.essence = 45;
+      state.coins = 60;
+      state.essence = 50;
       state.torches = 2;
       state.prestigeCount = 1;
-      state.phobiaBias = 'kraken';
+      state.unlockedSets.kraken = true;
+      state.albumParts.franken = { head: true, torso: true, hands: true, legs: true };
+      state.albumParts.kraken = { head: true, torso: true, hands: false, legs: false };
       returnToLab();
-      openTechTreeModal();
+      document.getElementById('monster-album-modal').classList.remove('hidden');
+      renderMonsterAlbumModal();
     } else if (stateName === 'STATE_2_NIGHT_FIRST_SCRATCH') {
-      state.deckCount = 3;
-      state.phobiaBias = 'kraken';
+      state.tutorialActive = false;
+      state.monsterCardsCount = 3;
+      state.unlockedSets.kraken = true;
+      state.selectedSetBias = 'kraken';
       startNightRaid();
       openCardForScratching(0);
     } else if (stateName === 'STATE_3_MID_RAID_ACTION') {
-      state.deckCount = 4;
-      state.phobiaBias = 'kraken';
-      state.techLevels['C2'] = 2;
+      state.tutorialActive = false;
+      state.monsterCardsCount = 4;
+      state.unlockedSets.kraken = true;
+      state.unlockedSets.pumpkin = true;
+      state.albumParts.kraken = { head: true, torso: true, hands: true, legs: true };
+      state.machinesUnlocked.atmosphere = true;
+      state.atmoCardsCount = 1;
       startNightRaid();
-      // Pre-scare 2 outer houses and spawn 3 active monsters
+      activateAtmosphereEffect(ATMOSPHERE_TYPES[0]);
       if (state.houses[1]) turnHouseLightsOn(state.houses[1]);
       if (state.houses[2]) turnHouseLightsOn(state.houses[2]);
-      spawnStitchedMonsterFromCard(createCardObject(90));
-      spawnStitchedMonsterFromCard(createCardObject(91));
-      spawnStitchedMonsterFromCard(createCardObject(92));
+      spawnStitchedMonsterFromCard(createMonsterCardObject(90));
+      spawnStitchedMonsterFromCard(createMonsterCardObject(91));
+      spawnStitchedMonsterFromCard(createMonsterCardObject(92));
       setHandState('TUCKED');
     } else if (stateName === 'STATE_4_PRESTIGE_STRESS') {
+      state.tutorialActive = false;
       state.torches = 6;
       state.essence = 80;
       state.prestigeCount = 2;
+      state.unlockedSets.kraken = true;
+      state.unlockedSets.pumpkin = true;
+      state.machinesUnlocked.atmosphere = true;
+      state.machinesUnlocked.prop = true;
       state.techLevels['P1'] = 2;
       state.techLevels['P2'] = 1;
       state.techLevels['P3'] = 1;
-      state.techLevels['P4'] = 1;
-      const defMod = MODULE_TREE.find((m) => m.id === 'characters.house_defenses');
-      if (defMod) defMod.enabled = true;
       startNightRaid();
+      deploySpookyProp();
       for (let i = 0; i < 4; i++) {
-        spawnStitchedMonsterFromCard(createCardObject(100 + i));
+        spawnStitchedMonsterFromCard(createMonsterCardObject(100 + i));
       }
       document.getElementById('designer-panel').classList.remove('hidden');
       refreshDesignerDropdown();
@@ -1013,26 +1452,26 @@
   }
 
   // =========================================================================
-  // 12. PLAYTESTER AI & RUNTIME AUDITOR
+  // 15. PLAYTESTER AI & AUDITOR LOOP
   // =========================================================================
   let aiInterval = null;
   function startPlaytesterAI(mode) {
     if (!isModOn('functionalities.playtester_ai')) return;
     stopPlaytesterAI();
+    if (state.phase === 'START') enterGameFromStart(false);
+
     aiInterval = setInterval(() => {
       if (state.phase === 'LAB') {
         if (mode === 'minmax') {
-          state.phobiaBias = 'kraken';
-          // Auto-upgrade Kraken Vat C2 if affordable
-          const c2 = TECH_NODES.find((n) => n.id === 'C2');
-          if (c2 && state.essence >= getTechNodeCost(c2) && state.techLevels['C2'] < c2.max) {
-            state.essence -= getTechNodeCost(c2);
-            state.techLevels['C2']++;
+          if (!state.unlockedSets.kraken && state.essence >= 10) {
+            state.essence -= 10;
+            state.unlockedSets.kraken = true;
           }
+          state.selectedSetBias = state.unlockedSets.kraken ? 'kraken' : 'franken';
         }
         while (state.coins >= state.cardCost) {
           state.coins -= state.cardCost;
-          state.deckCount++;
+          state.monsterCardsCount++;
         }
         startNightRaid();
       } else if (state.phase === 'VILLAGE') {
@@ -1042,17 +1481,14 @@
             openCardForScratching(nextIdx);
           } else {
             const card = state.cardsInHand[nextIdx];
-            card.zones.forEach((z) => {
-              z.revealed = true;
-            });
-            checkCardCompletion(card);
+            card.zones.forEach((z) => revealZoneNow(card, z, null, null));
           }
         } else if (state.houses.every((h) => h.lightsOn)) {
           returnToLab();
         }
       }
       updateTopHud();
-    }, 450);
+    }, 420);
   }
 
   function stopPlaytesterAI() {
@@ -1062,7 +1498,6 @@
     }
   }
 
-  // Main Game Loop + FPS & Text-Bloat Auditor
   let lastFrameTs = performance.now();
   let frameCount = 0;
   let fpsTimer = 0;
@@ -1075,22 +1510,30 @@
     fpsTimer += dt;
 
     if (state.phase === 'VILLAGE') {
-      // Monster scare ticks
       state.monsters.forEach((m) => scareHouseTick(m, dt));
 
-      // Prestige P2: Auto-Scratch Laser in battle
+      // Deployed Spooky Props passively scare random unscared houses!
+      if (state.props.length > 0) {
+        const unscared = state.houses.filter((h) => !h.lightsOn);
+        if (unscared.length > 0) {
+          const target = unscared[0];
+          target.courage = Math.max(0, target.courage - state.props.length * 8 * dt);
+          updateHouseVisual(target);
+          if (target.courage <= 0) turnHouseLightsOn(target);
+        }
+      }
+
+      // Prestige P2: Auto-Laser
       if (getTechLvl('P2') > 0 && state.handState === 'FOCUSED_SCRATCH') {
         const activeCard = state.cardsInHand[state.activeCardIndex];
         if (activeCard && !activeCard.completed) {
           activeCard.zones.forEach((z) => {
-            z.scratchedPct += 35 * dt;
-            if (z.scratchedPct >= 55) z.revealed = true;
+            z.scratchedPct += 40 * dt;
+            if (z.scratchedPct >= 50) revealZoneNow(activeCard, z, null, null);
           });
-          checkCardCompletion(activeCard);
         }
       }
 
-      // Night Timer Countdown
       if (isModOn('actions.night_timer_cycle')) {
         nightSubTimer += dt;
         if (nightSubTimer >= 1.0) {
@@ -1098,13 +1541,12 @@
           state.nightTimeLeft = Math.max(0, state.nightTimeLeft - 1);
           updateTopHud();
           if (state.nightTimeLeft <= 0) {
-            returnToLab();
+            finishNightWithSummary();
           }
         }
       }
     }
 
-    // 1-second Auditor Check
     if (fpsTimer >= 1.0) {
       const fps = Math.round(frameCount / fpsTimer);
       frameCount = 0;
@@ -1117,14 +1559,6 @@
         if (fpsEl) fpsEl.textContent = String(fps);
         if (errEl) errEl.textContent = String(state.errorsCount);
 
-        // NaN Guard
-        if (Number.isNaN(state.coins) || Number.isNaN(state.essence)) {
-          state.errorsCount++;
-          state.coins = 30;
-          state.essence = 0;
-        }
-
-        // Minimal Text Auditor: check that no gameplay button/badge has > 4 words
         let bloated = 0;
         document.querySelectorAll('.game-btn, .quest-chip, .tech-title, .boss-phobia-pill').forEach((el) => {
           const words = (el.textContent || '').trim().split(/\s+/).filter(Boolean);
@@ -1138,7 +1572,7 @@
   }
 
   // =========================================================================
-  // 13. UI BINDINGS & MODULE CHECKLIST SYNC
+  // 16. UI BINDINGS & SAVE MANAGER
   // =========================================================================
   function syncModulesVisibility() {
     MODULE_TREE.forEach((mod) => {
@@ -1173,37 +1607,117 @@
     document.getElementById('val-essence').textContent = String(Math.floor(state.essence));
     document.getElementById('val-torches').textContent = String(Math.floor(state.torches));
     document.getElementById('val-timer').textContent = `${state.nightTimeLeft}s`;
-    document.getElementById('val-deck-count').textContent = String(state.deckCount);
+    document.getElementById('val-monster-cards').textContent = String(state.monsterCardsCount);
     document.getElementById('val-card-cost').textContent = String(state.cardCost);
-    document.getElementById('start-cards-tag').textContent = `🃏${state.deckCount}`;
+
+    const totalNightCards = state.monsterCardsCount + state.atmoCardsCount + state.propCardsCount;
+    document.getElementById('start-cards-tag').textContent = `🃏 ${totalNightCards}`;
+    document.getElementById('album-prog-tag').textContent = `${getMasteredSetsCount()}/3 ⭐`;
 
     const dialIcon = document.getElementById('dial-icon');
     if (dialIcon) {
-      dialIcon.textContent =
-        state.phobiaBias === 'kraken' ? '🐙 Kraken' : state.phobiaBias === 'franken' ? '🧟 Franken' : '🧟/🐙 Mix';
+      const mset = MONSTER_SETS.find((s) => s.id === state.selectedSetBias) || MONSTER_SETS[0];
+      dialIcon.textContent = mset.name;
     }
     checkQuestsProgress();
   }
 
   function initEvents() {
-    // Lab Controls
+    // Starting Title Screen Buttons
+    document.getElementById('btn-play-tutorial').addEventListener('click', () => enterGameFromStart(true));
+    document.getElementById('btn-play-notut').addEventListener('click', () => enterGameFromStart(false));
+    document.getElementById('btn-home-menu').addEventListener('click', showStartScreen);
+    document.getElementById('btn-skip-tut').addEventListener('click', () => {
+      state.tutorialActive = false;
+      updateTutorialUI();
+    });
+
+    // Options & Credits Modals
+    document.getElementById('btn-open-options').addEventListener('click', () => {
+      document.getElementById('options-modal').classList.remove('hidden');
+    });
+    document.getElementById('btn-close-options').addEventListener('click', () => {
+      document.getElementById('options-modal').classList.add('hidden');
+    });
+    document.getElementById('btn-open-credits').addEventListener('click', () => {
+      document.getElementById('credits-modal').classList.remove('hidden');
+    });
+    document.getElementById('btn-close-credits').addEventListener('click', () => {
+      document.getElementById('credits-modal').classList.add('hidden');
+    });
+
+    document.getElementById('opt-sfx').addEventListener('change', (e) => {
+      state.sfxOn = e.target.checked;
+    });
+    document.getElementById('opt-haptics').addEventListener('change', (e) => {
+      state.hapticsOn = e.target.checked;
+    });
+
+    document.getElementById('btn-export-save').addEventListener('click', () => {
+      const box = document.getElementById('save-io-box');
+      const payload = btoa(
+        JSON.stringify({
+          coins: state.coins,
+          essence: state.essence,
+          torches: state.torches,
+          prestigeCount: state.prestigeCount,
+          machinesUnlocked: state.machinesUnlocked,
+          unlockedSets: state.unlockedSets,
+          albumParts: state.albumParts,
+          techLevels: state.techLevels
+        })
+      );
+      box.value = payload;
+      box.select();
+    });
+
+    document.getElementById('btn-import-save').addEventListener('click', () => {
+      try {
+        const raw = atob(document.getElementById('save-io-box').value.trim());
+        const data = JSON.parse(raw);
+        Object.assign(state, data);
+        renderLabMachines();
+        updateTopHud();
+      } catch (_) {}
+    });
+
+    document.getElementById('btn-hard-reset').addEventListener('click', () => {
+      localStorage.clear();
+      location.reload();
+    });
+
+    // Lab Machine 1 Controls
     document.getElementById('btn-buy-card').addEventListener('click', () => {
       if (state.coins >= state.cardCost) {
         state.coins -= state.cardCost;
-        state.deckCount++;
+        state.monsterCardsCount++;
         playSfx('scratch_foil');
+        if (state.tutorialActive && state.tutorialStep === 1) {
+          state.tutorialStep = 2;
+        }
         updateTopHud();
+        updateTutorialUI();
       }
     });
 
     document.getElementById('btn-phobia-dial').addEventListener('click', () => {
-      const order = ['balanced', 'kraken', 'franken'];
-      const next = order[(order.indexOf(state.phobiaBias) + 1) % order.length];
-      state.phobiaBias = next;
+      const unlocked = MONSTER_SETS.filter((s) => state.unlockedSets[s.id]).map((s) => s.id);
+      const next = unlocked[(unlocked.indexOf(state.selectedSetBias) + 1) % unlocked.length];
+      state.selectedSetBias = next;
       playSfx('scratch_foil');
       updateTopHud();
     });
 
+    // Monster Pack Album Modal
+    document.getElementById('btn-open-album').addEventListener('click', () => {
+      renderMonsterAlbumModal();
+      document.getElementById('monster-album-modal').classList.remove('hidden');
+    });
+    document.getElementById('btn-close-album').addEventListener('click', () => {
+      document.getElementById('monster-album-modal').classList.add('hidden');
+    });
+
+    // Tech Tree Modal
     document.getElementById('btn-open-tech').addEventListener('click', openTechTreeModal);
     document.getElementById('btn-close-tech').addEventListener('click', () => {
       document.getElementById('tech-tree-modal').classList.add('hidden');
@@ -1245,7 +1759,7 @@
       syncModulesVisibility();
     });
 
-    // Designer Mode (hx)
+    // Designer Mode (hx) + Tap-any-object on stage
     document.getElementById('btn-designer').addEventListener('click', () => {
       const p = document.getElementById('designer-panel');
       p.classList.toggle('hidden');
@@ -1254,6 +1768,24 @@
     document.getElementById('btn-close-designer').addEventListener('click', () => {
       document.getElementById('designer-panel').classList.add('hidden');
     });
+
+    document.getElementById('app-shell').addEventListener(
+      'click',
+      (e) => {
+        const panel = document.getElementById('designer-panel');
+        if (panel.classList.contains('hidden')) return;
+        if (panel.contains(e.target) || document.getElementById('top-bar').contains(e.target)) return;
+        const targetEl = e.target.closest('[data-design-id]');
+        if (targetEl) {
+          const id = targetEl.getAttribute('data-design-id');
+          const sel = document.getElementById('designer-target-select');
+          refreshDesignerDropdown();
+          sel.value = id;
+          syncSlidersToSelectedTarget();
+        }
+      },
+      true
+    );
 
     const targetSelect = document.getElementById('designer-target-select');
     targetSelect.addEventListener('change', syncSlidersToSelectedTarget);
@@ -1272,9 +1804,9 @@
       recordDesignerChange(id, next);
     };
 
-    document.getElementById('slider-scale').addEventListener('change', onSliderInput);
-    document.getElementById('slider-x').addEventListener('change', onSliderInput);
-    document.getElementById('slider-y').addEventListener('change', onSliderInput);
+    document.getElementById('slider-scale').addEventListener('input', onSliderInput);
+    document.getElementById('slider-x').addEventListener('input', onSliderInput);
+    document.getElementById('slider-y').addEventListener('input', onSliderInput);
 
     document.getElementById('btn-hx-undo').addEventListener('click', () => {
       const last = designerState.hxStack.pop();
@@ -1336,22 +1868,22 @@
     document.getElementById('btn-ai-stop').addEventListener('click', stopPlaytesterAI);
   }
 
-  // Expose testing API on window for automated test scripts & Reviewer Subagents
   window.FrankenScratcher = {
     state,
     MODULE_TREE,
+    MONSTER_SETS,
     loadFixedReviewState,
     startPlaytesterAI,
     stopPlaytesterAI,
-    triggerVillagerMobPrestige,
+    enterGameFromStart,
     openCardForScratching,
     setHandState
   };
 
-  // Boot
   loadDesignerHx();
   initEvents();
   syncModulesVisibility();
+  renderLabMachines();
   applyAllSavedDesignerTransforms();
   updateTopHud();
   requestAnimationFrame(mainLoop);

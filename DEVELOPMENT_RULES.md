@@ -24,28 +24,36 @@ Every element in FrankenScratcher is built as an **isolated, toggleable module**
 
 ### Module Tree Structure
 - [ ] **`/hud` (HUD & Screens)**
+  - [ ] `hud.start_screen` — Pixel-art Title Screen (`Play + Tutorial`, `Play No Tutorial`, `Options`, `Credits`)
+  - [ ] `hud.tutorial_overlay` — Step-by-step animated `👆` pointer tutorial with 2–3 word hints
   - [ ] `hud.top_bar` — Icon counters (`🪙 Coins`, `👻 Scream Essence`, `🔥 Mob Torches`, `🃏 Cards`, `🌙 Timer`)
-  - [ ] `hud.lab_screen` — Dr. Franken's Lab view (Scratch-Card Machine + Boss Phobia Preview Bubble)
-  - [ ] `hud.quest_stamps` — 3 visual icon Quest Stamps (`🏠💡x10`, `👑💡`, `🐙x3`) that reward `🔥 Mob Torches`
+  - [ ] `hud.lab_screen` — Customizable Pixel Lab with **3 Machine Slots** (Monster Press, Atmosphere Machine, Prop Machine)
+  - [ ] `hud.monster_album` — Unlockable Monster Pack Collection (`0/4` $\rightarrow$ `4/4` Full Pack Bonus & Scarier Monsters)
+  - [ ] `hud.quest_stamps` — 3 visual icon Quest Stamps (`🏠💡x6`, `👑💡`, `🐙x2`) that reward `🔥 Mob Torches`
   - [ ] `hud.tech_tree_modal` — Visual icon Tech Tree + **Expanded `🔥` Prestige Outer Ring** (post-Mob Raid)
-  - [ ] `hud.village_map` — Nighttime village cluster with Outer Houses + Central Boss House
-  - [ ] `hud.card_scratch_dock` — Bottom thumb-zone dock holding the active 4-zone Scratch Card
+  - [ ] `hud.village_map` — Simple dark-green pixel clearing with peripheral pixel trees + standalone pixel house sprites
+  - [ ] `hud.card_scratch_dock` — Bottom thumb-zone dock holding the active 4-State Scratch Card Hand
+  - [ ] `hud.options_credits_modals` — Options (`SFX`, `Haptics`, `Save`) & Credits modals
   - [ ] `hud.module_tree_modal` — Pre-start / runtime Elements Checklist toggle tree UI
   - [ ] `hud.designer_panel` — Designer Mode overlay (size sliders & persistent `hx` log)
 - [ ] **`/buttons` (Interactive Controls)**
-  - [ ] `buttons.buy_card` — `[+1 Card 🪙]` button on the Lab Machine
+  - [ ] `buttons.buy_card` — `[+1 Card 🪙]` button on active Lab Machines
+  - [ ] `buttons.machine_customizer` — Install / switch Lab Machines (Monster, Atmosphere, Spooky Prop)
+  - [ ] `buttons.open_monster_album` — `[📖 Monsters]` Collection & Unlockables button
   - [ ] `buttons.open_tech_tree` — `[⚡ Tech Tree]` button in the Lab
-  - [ ] `buttons.phobia_dial` — Icon toggle to bias printed parts toward a Phobia (`🐙` / `🕷️` / `👁️`)
+  - [ ] `buttons.phobia_dial` — Icon toggle to bias printed parts toward an unlocked Monster Set (`🧟` / `🐙` / `🎃`)
   - [ ] `buttons.trigger_mob_prestige` — `[🔥 Villager Raid!]` Prestige button unlocked by completing quests
   - [ ] `buttons.start_night` — `[🌙 Launch Night Raid ▶]` button to enter the village
   - [ ] `buttons.preset_state_loader` — Quick-load Fixed Review States (`STATE_0`–`STATE_4`)
-- [ ] **`/characters` (Monsters, Parts, Houses & Villager Mob)**
-  - [ ] `characters.card_4zones` — 4-spot Scratch Card (`Head`, `Torso`, `Legs`, `Hands`) + upgradable `5th/6th Slot`
-  - [ ] `characters.stitched_monster` — Assembled monster that pops out of a finished card onto the village
-  - [ ] `characters.outer_houses` — Sleeping village homes (Lights OFF $\rightarrow$ Lights ON when scared)
-  - [ ] `characters.boss_house` — Central Boss House with Phobia Thought Bubble (`😱 🐙 x3`) & high Courage bar
-  - [ ] `characters.house_defenses` — Toggleable defenses near houses (porch lights, guard dogs, ward totems)
-  - [ ] `characters.angry_villager_mob` — Cartoon villagers with torches & pitchforks (`🧑‍🌾🔥🔱`) that smash the Lab on Prestige
+- [ ] **`/characters` (Monsters, Parts, Atmospheres, Houses & Villager Mob)**
+  - [ ] `characters.card_4zones` — 4-spot Monster Scratch Card (`Head`, `Torso`, `Legs`, `Hands`) + `5th Slot`
+  - [ ] `characters.atmosphere_cards` — Scratchable Atmosphere Cards (`🌧️ Storm`, `🌫️ Fog`, `🌕 Blood Moon`) for village-wide buffs
+  - [ ] `characters.prop_cards` — Scratchable Spooky Yard Props (`🎃 Scarecrow`) that passively scare houses
+  - [ ] `characters.stitched_monster` — Pixel monster that pops up under a house window & wiggles head + hands near ears
+  - [ ] `characters.outer_houses` — Standalone pixel cottages (Dark Windows $\rightarrow$ Bright Yellow Windows when scared)
+  - [ ] `characters.boss_house` — Standalone Pixel Boss House with Phobia Thought Bubble (`⚓ 😱 👉 🐙 x3`)
+  - [ ] `characters.house_defenses` — Toggleable defenses near houses (porch lights, guard dogs)
+  - [ ] `characters.angry_villager_mob` — Cartoon pixel villagers with torches & pitchforks (`🧑‍🌾🔥🔱`) on Prestige
 - [ ] **`/actions` (Core Mechanics & Interactions)**
   - [ ] `actions.foil_scratch` — Touch/swipe silver foil removal across the 4 card zones
   - [ ] `actions.monster_stitch_spawn` — Lightning stitch animation combining revealed `Head + Torso + Legs + Hands`
