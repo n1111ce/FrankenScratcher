@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>FrankenScratcher</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Mobile Portrait Frame Wrapper -->
+  <div id="app-shell" data-design-id="app_shell">
+
+    <!-- 1. TOP HUD BAR (hud.top_bar) -->
+    <header id="top-bar" data-module="hud.top_bar" data-design-id="hud_top_bar">
+      <div class="stat-pill" title="Fear Coins">
+        <span class="icon">🪙</span>
+        <span id="val-coins">30</span>
+      </div>
+      <div class="stat-pill" title="Scream Essence">
+        <span class="icon">👻</span>
+        <span id="val-essence">0</span>
+      </div>
+      <div class="stat-pill torch-pill" title="Mob Torches (Prestige)">
+        <span class="icon">🔥</span>
+        <span id="val-torches">0</span>
+      </div>
+      <div class="stat-pill timer-pill hidden" id="night-timer-pill" title="Night Timer">
+        <span class="icon">🌙</span>
+        <span id="val-timer">45s</span>
+      </div>
+
+      <div class="top-tools">
+        <button id="btn-checklist" class="icon-btn" title="Elements Checklist">☑️</button>
+        <button id="btn-designer" class="icon-btn" title="Designer Mode (hx)">🛠️</button>
+        <button id="btn-dev-tools" class="icon-btn" title="States & AI Tester">🤖</button>
+      </div>
+    </header>
+
+    <!-- 2. FULL-SCREEN LAB STAGE (hud.lab_screen) -->
+    <main id="lab-screen" class="stage-screen active" data-module="hud.lab_screen">
+      <div class="stage-bg lab-bg"></div>
+
+      <!-- Visual Quest Stamps (hud.quest_stamps) -->
+      <section id="quest-stamps" data-module="hud.quest_stamps" data-design-id="quest_stamps">
+        <div class="quest-chip" id="quest-1" title="Turn Lights ON in 6 Houses">
+          <span>🏠💡</span>
+          <b id="q1-prog">0/6</b>
+          <span class="reward">🔥1</span>
+        </div>
+        <div class="quest-chip" id="quest-2" title="Spawn 2 Kraken-Head Monsters">
+          <span>🐙⚡</span>
+          <b id="q2-prog">0/2</b>
+          <span class="reward">🔥1</span>
+        </div>
+        <div class="quest-chip" id="quest-3" title="Scare the Sailor Boss House">
+          <span>⚓👑💡</span>
+          <b id="q3-prog">0/1</b>
+          <span class="reward">🔥3</span>
+        </div>
+      </section>
+
+      <!-- Boss House Phobia Clue Bubble (Zero Text Wall!) -->
+      <div id="boss-clue-card" data-design-id="boss_clue_card">
+        <div class="boss-mini-house">⚓🏠</div>
+        <div class="phobia-thought">
+          <span class="scared-face">😱</span>
+          <span class="arrow">👉</span>
+          <span class="phobia-target" id="boss-phobia-icon">🐙</span>
+          <span class="mult-badge">x3</span>
+        </div>
+      </div>
+
+      <!-- Central Scratch-Card Printing Machine Hotspot -->
+      <div id="lab-machine-widget" data-design-id="lab_machine_widget">
+        <div class="machine-card-counter" id="lab-deck-badge">
+          <span>🃏</span> <b id="val-deck-count">3</b>
+        </div>
+        <div class="gene-bias-badge" id="gene-bias-badge" data-module="buttons.phobia_dial">
+          <button id="btn-phobia-dial" class="dial-btn" data-design-id="btn_phobia_dial">
+            <span>🧬</span>
+            <span id="dial-icon">🧟/🐙</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Lab Bottom Action Bar -->
+      <footer id="lab-controls" data-design-id="lab_controls">
+        <button id="btn-buy-card" class="game-btn gold-btn" data-module="buttons.buy_card" data-design-id="btn_buy_card">
+          <span class="big-icon">🃏+1</span>
+          <span class="cost-tag">🪙 <b id="val-card-cost">10</b></span>
+        </button>
+
+        <button id="btn-open-tech" class="game-btn purple-btn" data-module="buttons.open_tech_tree" data-design-id="btn_open_tech">
+          <span class="big-icon">⚡🌳</span>
+          <span class="cost-tag">👻</span>
+        </button>
+
+        <button id="btn-mob-prestige" class="game-btn fire-btn hidden" data-module="buttons.trigger_mob_prestige" data-design-id="btn_mob_prestige">
+          <span class="big-icon">🧑‍🌾🔥</span>
+          <span class="cost-tag">🔱</span>
+        </button>
+
+        <button id="btn-start-night" class="game-btn green-btn" data-module="buttons.start_night" data-design-id="btn_start_night">
+          <span class="big-icon">🌙 ▶</span>
+          <span class="cost-tag" id="start-cards-tag">🃏3</span>
+        </button>
+      </footer>
+    </main>
+
+    <!-- 3. FULL-SCREEN NIGHT VILLAGE STAGE (hud.village_map) -->
+    <main id="village-screen" class="stage-screen" data-module="hud.village_map">
+      <div class="stage-bg village-bg"></div>
+
+      <!-- Back to Lab / End Night button -->
+      <button id="btn-retreat-lab" class="floating-retreat-btn" data-design-id="btn_retreat_lab" title="Return to Lab">
+        🧪↩
+      </button>
+
+      <!-- Village Houses Layer (Outer Houses + Central Boss House) -->
+      <div id="village-houses-layer" data-design-id="village_houses_layer">
+        <!-- Populated dynamically with Boss House in center & 6 Outer Houses -->
+      </div>
+
+      <!-- Active Stitched Monsters Layer -->
+      <div id="village-monsters-layer" data-module="characters.stitched_monster"></div>
+
+      <!-- Floating VFX / Screams Layer -->
+      <div id="village-vfx-layer"></div>
+
+      <!-- 4-STATE AUTO-TUCKING CARD HAND DOCK (hud.card_scratch_dock) -->
+      <section id="card-hand-dock" class="hand-state-tucked" data-module="hud.card_scratch_dock" data-design-id="card_hand_dock">
+        <!-- Tucked / Raised Fan Header Handle -->
+        <div id="card-hand-handle">
+          <span id="hand-prompt-icon">👆 🃏</span>
+          <b id="hand-cards-left">3</b>
+        </div>
+
+        <!-- Fan of Mini Cards (Visible in TUCKED and RAISED states) -->
+        <div id="card-fan-container"></div>
+
+        <!-- Enlarged Focused 4-Zone Scratch Card (Visible in FOCUSED_SCRATCH state) -->
+        <div id="focused-card-modal" class="hidden" data-module="characters.card_4zones" data-design-id="focused_scratch_card">
+          <div class="focused-card-header">
+            <span class="card-title-icons">🪙〰️🃏</span>
+            <button id="btn-tuck-card" class="mini-close-btn" title="Tuck Down">▼</button>
+          </div>
+          <div id="scratch-zones-grid" class="zones-4">
+            <!-- 4 Scratch Zones: Head, Torso, Hands, Legs (plus optional 5th/6th) -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 4. TECH TREE & PRESTIGE MODAL (hud.tech_tree_modal) -->
+    <div id="tech-tree-modal" class="modal-overlay hidden" data-module="hud.tech_tree_modal">
+      <div class="modal-card tech-modal-card" data-design-id="tech_modal_card">
+        <div class="modal-header">
+          <span>⚡🧪 / 🔥🔱</span>
+          <div class="modal-currencies">
+            <span>👻 <b id="tech-essence">0</b></span>
+            <span>🔥 <b id="tech-torches">0</b></span>
+          </div>
+          <button id="btn-close-tech" class="close-btn">✕</button>
+        </div>
+        <div id="tech-nodes-container" class="tech-grid"></div>
+      </div>
+    </div>
+
+    <!-- 5. ANGRY VILLAGER MOB RAID CUTSCENE OVERLAY (characters.angry_villager_mob) -->
+    <div id="mob-raid-overlay" class="modal-overlay hidden" data-module="characters.angry_villager_mob">
+      <div class="mob-cutscene-box">
+        <div class="mob-crowd">🧑‍🌾🔥🔱 😡🔥🔱 🧑‍🌾🔥</div>
+        <div class="mob-smash">💥⚙️🔥🧪💥</div>
+        <div class="mob-unlock-badge">🔥⚡🌳✨</div>
+      </div>
+    </div>
+
+    <!-- 6. ELEMENTS CHECKLIST TREE MODAL (hud.module_tree_modal) -->
+    <div id="checklist-modal" class="modal-overlay hidden" data-module="hud.module_tree_modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span>☑️ Elements Checklist</span>
+          <button id="btn-close-checklist" class="close-btn">✕</button>
+        </div>
+        <div class="checklist-actions">
+          <button id="btn-enable-all-mods" class="tiny-btn">All ON</button>
+          <button id="btn-simple-mods" class="tiny-btn">Simple Only</button>
+        </div>
+        <div id="module-tree-list" class="scroll-list"></div>
+      </div>
+    </div>
+
+    <!-- 7. DESIGNER MODE PANEL WITH PERSISTENT HX (hud.designer_panel) -->
+    <aside id="designer-panel" class="floating-panel hidden" data-module="hud.designer_panel">
+      <div class="panel-header">
+        <span>🛠️ Designer (`hx`)</span>
+        <button id="btn-close-designer" class="close-btn">✕</button>
+      </div>
+      <div class="designer-body">
+        <label class="compact-row">
+          <span>🎯</span>
+          <select id="designer-target-select"></select>
+        </label>
+        <label class="compact-row">
+          <span>🔍 Scale</span>
+          <input type="range" id="slider-scale" min="0.5" max="1.8" step="0.05" value="1" />
+          <b id="lbl-scale">1.00</b>
+        </label>
+        <label class="compact-row">
+          <span>↔️ X</span>
+          <input type="range" id="slider-x" min="-120" max="120" step="2" value="0" />
+          <b id="lbl-x">0</b>
+        </label>
+        <label class="compact-row">
+          <span>↕️ Y</span>
+          <input type="range" id="slider-y" min="-120" max="120" step="2" value="0" />
+          <b id="lbl-y">0</b>
+        </label>
+        <div class="designer-btns">
+          <button id="btn-hx-undo" class="tiny-btn">↩ Undo</button>
+          <button id="btn-hx-redo" class="tiny-btn">↪ Redo</button>
+          <button id="btn-hx-reset-one" class="tiny-btn">Reset 🎯</button>
+          <button id="btn-hx-reset-all" class="tiny-btn">Clear All</button>
+        </div>
+        <div id="hx-log-list" class="hx-log"></div>
+      </div>
+    </aside>
+
+    <!-- 8. DEV / FIXED STATES / PLAYTESTER AI / AUDITOR PANEL -->
+    <aside id="dev-panel" class="floating-panel hidden">
+      <div class="panel-header">
+        <span>🤖 States & AI</span>
+        <button id="btn-close-dev" class="close-btn">✕</button>
+      </div>
+      <div class="dev-body">
+        <div class="state-btns" data-module="buttons.preset_state_loader">
+          <button class="tiny-btn" data-state="STATE_0_BOOT">S0:Lab</button>
+          <button class="tiny-btn" data-state="STATE_1_TECH_TREE">S1:Tech</button>
+          <button class="tiny-btn" data-state="STATE_2_NIGHT_FIRST_SCRATCH">S2:Scratch</button>
+          <button class="tiny-btn" data-state="STATE_3_MID_RAID_ACTION">S3:Raid</button>
+          <button class="tiny-btn" data-state="STATE_4_PRESTIGE_STRESS">S4:Mob🔥</button>
+        </div>
+        <div class="ai-btns" data-module="functionalities.playtester_ai">
+          <button id="btn-ai-scratcher" class="tiny-btn">🤖 Scratcher</button>
+          <button id="btn-ai-minmax" class="tiny-btn">🤖 MinMax</button>
+          <button id="btn-ai-stop" class="tiny-btn">⏹ Stop</button>
+        </div>
+        <div id="audit-report-box" class="audit-box" data-module="functionalities.audit_profiler">
+          FPS: <b id="audit-fps">60</b> | Err: <b id="audit-err">0</b> | Txt: <b id="audit-txt">OK</b>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
